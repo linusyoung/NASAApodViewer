@@ -8,18 +8,17 @@ import 'dart:convert' as json;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:apod_viewer/src/apodpic.dart';
+import 'package:apod_viewer/src/NASAApi.dart';
 
 void main() {
   test('Get picture json from NASA', () async {
-    final baseUrl = 'https://api.nasa.gov/planetary/apod?';
-    final apiKey = 'DEMO_KEY';
-    final requestUrl = baseUrl + 'api_key=' + apiKey;
+    final apiCall = NASAApi();
+    final requestUrl = apiCall.getUrl();
     print(requestUrl);
     final res = await http.get(requestUrl);
     if (res.statusCode == 200){
-      final picJson = json.jsonDecode(res.body);
-      final apod = Apodpic.fromJson(picJson);
-      print(apod.date);
+      final parsed = json.jsonDecode(res.body);
+      final apod = Apodpic.fromJson(parsed);
       expect(apod.date, '2018-07-26');
     }
   });
