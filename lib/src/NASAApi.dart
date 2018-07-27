@@ -1,12 +1,16 @@
+
 class NASAApi {
   static const API_KEY = "2bHuLGYETr9kzcrkqRWBqlJOP1c1AYfMXilVkeAl";
   static const BASE_URL ="https://api.nasa.gov/planetary/apod?";
 
-  final date;
+  String date;
 
-  NASAApi();
+  NASAApi(){
+    this.date = null;
+  }
 
   NASAApi.hasDate({this.date});
+
   String getUrl(){
     var requestUrl;
     if (date == null){
