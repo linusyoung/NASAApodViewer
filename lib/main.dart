@@ -1,10 +1,7 @@
+import 'package:apod_viewer/api.dart';
 import 'package:flutter/material.dart';
-import 'src/NASAApi.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'dart:async';
-import 'package:http/http.dart' as http;
 import 'package:apod_viewer/src/apodpic.dart';
-import 'dart:convert' as json;
 
 void main() => runApp(new MyApp());
 
@@ -98,18 +95,5 @@ class _MyHomePageState extends State<MyHomePage> {
             )),
           ]),
         ]));
-  }
-}
-
-Future<Apodpic> getApodData() async {
-  final apiCall = NASAApi();
-  final requestUrl = apiCall.getUrl();
-  final res = await http.get(requestUrl);
-  print(requestUrl);
-  if (res.statusCode == 200) {
-    final parsed = json.jsonDecode(res.body);
-    return Apodpic.fromJson(parsed);
-  } else {
-    throw Exception('Fail to get pictures;');
   }
 }
