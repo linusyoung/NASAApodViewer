@@ -46,9 +46,44 @@ class _MyHomePageState extends State<MyHomePage> {
               future: getApodData(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return FadeInImage.memoryNetwork(
-                    placeholder: kTransparentImage,
-                    image: snapshot.data.url,
+                  return Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              snapshot.data.title,
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Text(
+                                snapshot.data.date,
+                                style: TextStyle(),
+                              ),
+                              Text(snapshot.data)
+                            ]),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                        child: FadeInImage.memoryNetwork(
+                          placeholder: kTransparentImage,
+                          image: snapshot.data.url,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(snapshot.data.explanation),
+                      ),
+                    ],
                   );
                 } else if (snapshot.hasError) {
                   return Text("${snapshot.error}");
@@ -65,10 +100,11 @@ Future<Apodpic> getApodData() async {
   final apiCall = NASAApi();
   final requestUrl = apiCall.getUrl();
   final res = await http.get(requestUrl);
+  print(requestUrl);
   if (res.statusCode == 200) {
     final parsed = json.jsonDecode(res.body);
     return Apodpic.fromJson(parsed);
-  } else{
+  } else {
     throw Exception('Fail to get pictures;');
   }
 }
