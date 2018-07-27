@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-// import 'package:stock_viewer_flutter/src/NASAApi.dart';
+import 'src/NASAApi.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'package:apod_viewer/src/apodpic.dart';
+import 'dart:convert' as json;
 
 void main() => runApp(new MyApp());
 
@@ -32,21 +36,39 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(widget.title),
-      ),
-      body: Stack(
-          children: <Widget>[
-            Center(child: CircularProgressIndicator()),
-            Center(
-              child: FadeInImage.memoryNetwork(
-                placeholder: kTransparentImage,
-                image:
-                    'https://apod.nasa.gov/apod/image/1807/B228_2018-07-07Santos1100.jpg',
-              ),
-            ),
-          ],
+        appBar: new AppBar(
+          title: new Text(widget.title),
         ),
-    );
+        body: Column(children: <Widget>[
+          Stack(children: <Widget>[
+            Center(
+                child: FutureBuilder<Apodpic>(
+              future: getApodData(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return FadeInImage.memoryNetwork(
+                    placeholder: kTransparentImage,
+                    image: snapshot.data.url,
+                  );
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+                return CircularProgressIndicator();
+              },
+            )),
+          ]),
+        ]));
+  }
+}
+
+Future<Apodpic> getApodData() async {
+  final apiCall = NASAApi();
+  final requestUrl = apiCall.getUrl();
+  final res = await http.get(requestUrl);
+  if (res.statusCode == 200) {
+    final parsed = json.jsonDecode(res.body);
+    return Apodpic.fromJson(parsed);
+  } else{
+    throw Exception('Fail to get pictures;');
   }
 }
