@@ -55,7 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           children: <Widget>[
                             Text(
                               snapshot.data.title,
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20.0),
                             ),
                           ],
                         ),
@@ -69,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 snapshot.data.date,
                                 style: TextStyle(),
                               ),
-                              Text(snapshot.data)
+                              Text(snapshot.data.copyright),
                             ]),
                       ),
                       Padding(
@@ -80,8 +81,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(snapshot.data.explanation),
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          snapshot.data.explanation,
+                          softWrap: true,
+                          textAlign: TextAlign.justify,
+                        ),
                       ),
                     ],
                   );
