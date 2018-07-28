@@ -1,5 +1,5 @@
-import 'package:apod_viewer/api.dart';
 import 'package:apod_viewer/src/apodpic.dart';
+import 'package:apod_viewer/src/data_fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,7 +17,7 @@ class _ContentBody extends State<ContentBody> {
         Center(
           child: FutureBuilder<Apodpic>(
             future: getApodData(),
-            builder: (context, snapshot) {
+            builder: (_, snapshot) {
               if (snapshot.hasData) {
                 return Column(
                   children: <Widget>[

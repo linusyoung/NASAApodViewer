@@ -14,9 +14,9 @@ class NASAApi {
   String getUrl(){
     var requestUrl;
     if (date == null){
-      requestUrl = BASE_URL + 'api_key=' + API_KEY;
+      requestUrl = BASE_URL + 'api_key=' + API_KEY + '&hd=true';
     } else {
-      requestUrl = BASE_URL + 'api_key=' + API_KEY + '&date=' +date;
+      requestUrl = BASE_URL + 'api_key=' + API_KEY + '&date=' +date + '&hd=true';
     } 
     return requestUrl;
   }
