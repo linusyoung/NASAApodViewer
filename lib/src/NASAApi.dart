@@ -5,19 +5,9 @@ class NASAApi {
 
   String date;
 
-  NASAApi(){
-    this.date = null;
-  }
-
-  NASAApi.hasDate({this.date});
+  NASAApi({this.date});
 
   String getUrl(){
-    var requestUrl;
-    if (date == null){
-      requestUrl = BASE_URL + 'api_key=' + API_KEY + '&hd=true';
-    } else {
-      requestUrl = BASE_URL + 'api_key=' + API_KEY + '&date=' +date + '&hd=true';
-    } 
-    return requestUrl;
+    return BASE_URL + 'api_key=' + API_KEY + '&date=' +this.date + '&hd=true';
   }
 }

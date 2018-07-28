@@ -23,7 +23,7 @@ class Apodpic {
 
     return Apodpic(
         date: json['date'],
-        copyright: json['copyright'],
+        copyright: json['copyright'] == null? '' : '\u00a9' + json['copyright'],
         explanation: json['explanation'],
         hdurl: json['hdurl'],
         mediaType: json['media_type'],

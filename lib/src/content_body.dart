@@ -5,6 +5,8 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContentBody extends StatefulWidget {
+  final String picDate;
+  ContentBody({this.picDate});
   @override
   _ContentBody createState() => _ContentBody();
 }
@@ -16,7 +18,7 @@ class _ContentBody extends State<ContentBody> {
       children: <Widget>[
         Center(
           child: FutureBuilder<Apodpic>(
-            future: getApodData(),
+            future: getApodData(widget.picDate),
             builder: (_, snapshot) {
               if (snapshot.hasData) {
                 return Column(
@@ -26,10 +28,13 @@ class _ContentBody extends State<ContentBody> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text(
-                            snapshot.data.title,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20.0),
+                          Flexible(
+                            child: Text(
+                              snapshot.data.title,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20.0),
+                            ),
                           ),
                         ],
                       ),
@@ -37,13 +42,14 @@ class _ContentBody extends State<ContentBody> {
                     Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
                             Text(
                               snapshot.data.date,
                               style: TextStyle(),
                             ),
-                            Text('\u00a9' + snapshot.data.copyright),
+                            // TODO: handle non copyright layout better
+                            Text(snapshot.data.copyright),
                           ]),
                     ),
                     Padding(
