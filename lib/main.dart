@@ -36,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: new AppBar(
         title: new Text(widget.title),
       ),
-      body: Column(
+      body: ListView(
         children: <Widget>[
           Stack(
             children: <Widget>[
@@ -105,7 +105,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.calendar_today),
-        onPressed: null,
+        onPressed: (){
+
+        },
       ),
     );
   }
