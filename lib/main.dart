@@ -2,6 +2,7 @@ import 'package:apod_viewer/api.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:apod_viewer/src/apodpic.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(new MyApp());
 
@@ -71,15 +72,22 @@ class _MyHomePageState extends State<MyHomePage> {
                                     snapshot.data.date,
                                     style: TextStyle(),
                                   ),
-                                  Text(snapshot.data.copyright),
+                                  Text('\u00a9' + snapshot.data.copyright),
                                 ]),
                           ),
                           Padding(
                             padding:
                                 const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                            child: FadeInImage.memoryNetwork(
-                              placeholder: kTransparentImage,
-                              image: snapshot.data.url,
+                            child: GestureDetector(
+                              child: FadeInImage.memoryNetwork(
+                                placeholder: kTransparentImage,
+                                image: snapshot.data.url,
+                              ),
+                              onLongPress: () async {
+                                if (await canLaunch(snapshot.data.hdurl)){
+                                  launch(snapshot.data.hdurl);
+                                }
+                              },
                             ),
                           ),
                           Padding(
@@ -105,9 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.calendar_today),
-        onPressed: (){
-
-        },
+        onPressed: () {},
       ),
     );
   }
