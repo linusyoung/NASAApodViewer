@@ -1,3 +1,4 @@
+import 'package:apod_viewer/src/NASAApi.dart';
 import 'package:apod_viewer/src/content_body.dart';
 import 'package:apod_viewer/src/data_fetch.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,6 @@ class _MyHomePageState extends State<MyHomePage> {
   static DateTime _selectedDate = DateTime.now();
   String _picDate = _selectedDate.toLocal().toString().substring(0, 10);
   var _shake = false;
-  final DateTime _minDate = DateTime(1995, 6, 20);
 
   @override
   void initState() {
@@ -52,26 +52,29 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(widget.title),
-      ),
+      appBar: new AppBar(title: new Text(widget.title), actions: <Widget>[
+        IconButton(
+            icon: Icon(Icons.date_range),
+            onPressed: () {
+              showDatePicker(
+                context: context,
+                firstDate: NASAApi.minDate,
+                lastDate: NASAApi.maxDate,
+                initialDate: _selectedDate,
+              ).then((DateTime value) {
+                _selectedDate = value;
+                setState(() {
+                  _picDate = value.toString().substring(0, 10);
+                });
+              });
+            }),
+      ]),
       body: ListView(children: <Widget>[
         ContentBody(picDate: _picDate),
       ]),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.date_range),
+        child: Icon(Icons.favorite),
         onPressed: () {
-          showDatePicker(
-                  context: context,
-                  firstDate: _minDate,
-                  lastDate: DateTime.now().toLocal(),
-                  initialDate: _selectedDate,
-              ).then((DateTime value) {
-                _selectedDate = value;
-            setState(() {
-              _picDate = value.toString().substring(0,10);
-            });
-          });
         },
       ),
     );

@@ -21,8 +21,8 @@ Future<Apodpic> getApodData(String date) async {
 }
 
 String getRandomDate() {
-  final DateTime minDate = DateTime(1995, 6, 20);
-  final DateTime maxDate = DateTime.now().toLocal();
+  final DateTime minDate = NASAApi.minDate;
+  final DateTime maxDate = NASAApi.maxDate;
   final Duration randomRange = maxDate.difference(minDate);
   final int dateDiff = Random().nextInt(randomRange.inDays);
   return minDate.add(Duration(days: dateDiff)).toString().substring(0,10);
