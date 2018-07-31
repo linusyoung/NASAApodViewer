@@ -1,4 +1,3 @@
-
 import 'package:apod_viewer/src/content_body.dart';
 import 'package:apod_viewer/src/data_fetch.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +30,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var _picDate = DateTime.now().toLocal().toString().substring(0, 10);
+  static DateTime _selectedDate = DateTime.now();
+  String _picDate = _selectedDate.toLocal().toString().substring(0, 10);
   var _shake = false;
+  final DateTime _minDate = DateTime(1995, 6, 20);
 
   @override
   void initState() {
@@ -40,11 +41,12 @@ class _MyHomePageState extends State<MyHomePage> {
     accelerometerEvents.listen((AccelerometerEvent event) {
       if (event.x.abs() >= 3.0 && !_shake) {
         setState(() {
+          // TODO: handle multiple times of shacking
           _picDate = getRandomDate();
           _shake = true;
         });
       }
-    });
+    }).onDone(null);
   }
 
   @override
@@ -57,8 +59,20 @@ class _MyHomePageState extends State<MyHomePage> {
         ContentBody(picDate: _picDate),
       ]),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.calendar_today),
-        onPressed: () {},
+        child: Icon(Icons.date_range),
+        onPressed: () {
+          showDatePicker(
+                  context: context,
+                  firstDate: _minDate,
+                  lastDate: DateTime.now().toLocal(),
+                  initialDate: _selectedDate,
+              ).then((DateTime value) {
+                _selectedDate = value;
+            setState(() {
+              _picDate = value.toString().substring(0,10);
+            });
+          });
+        },
       ),
     );
   }

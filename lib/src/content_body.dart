@@ -10,7 +10,7 @@ class ContentBody extends StatefulWidget {
   @override
   _ContentBody createState() => _ContentBody();
 }
-
+// TODO: handle exceptions from network call properly
 class _ContentBody extends State<ContentBody> {
   @override
   Widget build(BuildContext context) {
@@ -58,6 +58,7 @@ class _ContentBody extends State<ContentBody> {
                         child: FadeInImage.memoryNetwork(
                           placeholder: kTransparentImage,
                           image: snapshot.data.url,
+                          fit: BoxFit.fitWidth,
                         ),
                         onLongPress: () async {
                           if (await canLaunch(snapshot.data.hdurl)) {
