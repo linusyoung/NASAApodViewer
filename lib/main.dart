@@ -31,8 +31,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static DateTime _selectedDate = DateTime.now();
-  String _picDate = _selectedDate.toLocal().toString().substring(0, 10);
+  DateTime _selectedDate = DateTime.now();
+  String _picDate = DateTime.now().toLocal().toString().substring(0, 10);
   var _shake = false;
 
   @override
@@ -51,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print(NASAApi.maxDate);
     return new Scaffold(
       appBar: new AppBar(title: new Text(widget.title), actions: <Widget>[
         IconButton(
@@ -62,10 +63,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 lastDate: NASAApi.maxDate,
                 initialDate: _selectedDate,
               ).then((DateTime value) {
-                _selectedDate = value;
-                setState(() {
-                  _picDate = value.toString().substring(0, 10);
-                });
+                if (value != null) {
+                  _selectedDate = value;
+                  setState(() {
+                    _picDate = value.toString().substring(0, 10);
+                  });
+                }
               });
             }),
       ]),
