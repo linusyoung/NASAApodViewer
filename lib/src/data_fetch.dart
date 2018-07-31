@@ -10,8 +10,7 @@ Future<Apodpic> getApodData(String date) async {
   final apiCall = NASAApi(date: date);
   final requestUrl = apiCall.getUrl();
   final res = await http.get(requestUrl);
-  // TODO: remove debug
-  print(requestUrl);
+
   if (res.statusCode == 200) {
     final parsed = json.jsonDecode(res.body);
     return Apodpic.fromJson(parsed);

@@ -51,7 +51,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(NASAApi.maxDate);
     return new Scaffold(
       appBar: new AppBar(title: new Text(widget.title), actions: <Widget>[
         IconButton(
