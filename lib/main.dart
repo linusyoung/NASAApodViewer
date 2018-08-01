@@ -3,6 +3,7 @@ import 'package:apod_viewer/src/content_body.dart';
 import 'package:apod_viewer/src/data_fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:sensors/sensors.dart';
+import 'dart:async';
 
 void main() => runApp(new MyApp());
 
@@ -33,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   DateTime _selectedDate = DateTime.now();
   String _picDate = DateTime.now().toLocal().toString().substring(0, 10);
-  var _shake = false;
+  bool _shake = false;
 
   @override
   void initState() {
@@ -44,6 +45,12 @@ class _MyHomePageState extends State<MyHomePage> {
           // TODO: handle multiple times of shacking
           _picDate = getRandomDate();
           _shake = true;
+          print(DateTime.now());
+        });
+      }
+      if (_shake){
+        Timer(Duration(milliseconds: 4000), (){
+          _shake = false;
         });
       }
     }).onDone(null);
