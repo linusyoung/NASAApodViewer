@@ -45,7 +45,6 @@ class _MyHomePageState extends State<MyHomePage> {
           // TODO: handle multiple times of shacking
           _picDate = getRandomDate();
           _shake = true;
-          print(DateTime.now());
         });
       }
       if (_shake){
