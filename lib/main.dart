@@ -34,57 +34,71 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   DateTime _selectedDate = DateTime.now();
   String _picDate = DateTime.now().toLocal().toString().substring(0, 10);
-  bool _shake = false;
+  bool _isShakable = false;
+  bool _isFavorite = false;
 
   @override
   void initState() {
     super.initState();
     accelerometerEvents.listen((AccelerometerEvent event) {
-      if (event.x.abs() >= 3.0 && !_shake) {
+      if (event.x.abs() >= 3.0 && !_isShakable) {
         setState(() {
           // TODO: handle multiple times of shacking
           _picDate = getRandomDate();
-          _shake = true;
+          _isShakable = true;
         });
       }
-      if (_shake){
-        Timer(Duration(milliseconds: 4000), (){
-          _shake = false;
+      if (_isShakable) {
+        Timer(Duration(milliseconds: 4000), () {
+          _isShakable = false;
         });
       }
-    }).onDone(null);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(title: new Text(widget.title), actions: <Widget>[
-        IconButton(
-            icon: Icon(Icons.date_range),
-            onPressed: () {
-              showDatePicker(
-                context: context,
-                firstDate: NASAApi.minDate,
-                lastDate: NASAApi.maxDate,
-                initialDate: _selectedDate,
-              ).then((DateTime value) {
-                if (value != null) {
-                  _selectedDate = value;
-                  setState(() {
-                    _picDate = value.toString().substring(0, 10);
-                  });
-                }
-              });
-            }),
-      ]),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+        titleSpacing: 1.0,
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.date_range),
+              onPressed: () {
+                showDatePicker(
+                  context: context,
+                  firstDate: NASAApi.minDate,
+                  lastDate: NASAApi.maxDate,
+                  initialDate: _selectedDate,
+                ).then((DateTime value) {
+                  if (value != null) {
+                    _selectedDate = value;
+                    setState(() {
+                      _picDate = value.toString().substring(0, 10);
+                    });
+                  }
+                });
+              }),
+          IconButton(
+            icon: Icon(Icons.share),
+            onPressed: () {},
+          ),
+        ],
+        leading: IconButton(
+          icon: Icon(Icons.list),
+          onPressed: () {},
+        ),
+      ),
       body: ListView(children: <Widget>[
         ContentBody(picDate: _picDate),
       ]),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.favorite),
-        onPressed: () {
-        },
-      ),
+        child: _isFavorite ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
+        onPressed: (){
+          setState(() => _isFavorite = !_isFavorite);
+        }),
     );
   }
+
 }

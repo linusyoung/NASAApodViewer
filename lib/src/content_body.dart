@@ -1,3 +1,4 @@
+import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/src/apodpic.dart';
 import 'package:apod_viewer/src/data_fetch.dart';
 import 'package:flutter/material.dart';
@@ -6,10 +7,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ContentBody extends StatefulWidget {
   final String picDate;
-  ContentBody({this.picDate});
+  final FavoriteDatabase db;
+  ContentBody({this.picDate, this.db});
   @override
   _ContentBody createState() => _ContentBody();
 }
+
 // TODO: handle exceptions from network call properly
 class _ContentBody extends State<ContentBody> {
   @override
@@ -36,6 +39,7 @@ class _ContentBody extends State<ContentBody> {
                                   fontWeight: FontWeight.bold, fontSize: 20.0),
                             ),
                           ),
+                          // CircularProgressIndicator(),
                         ],
                       ),
                     ),
@@ -50,6 +54,7 @@ class _ContentBody extends State<ContentBody> {
                             ),
                             // TODO: handle non copyright layout better
                             Text(snapshot.data.copyright),
+                            // CircularProgressIndicator(),
                           ]),
                     ),
                     Padding(
@@ -59,6 +64,7 @@ class _ContentBody extends State<ContentBody> {
                           placeholder: kTransparentImage,
                           image: snapshot.data.url,
                           fit: BoxFit.fitWidth,
+                          fadeInDuration: Duration(milliseconds: 400),
                         ),
                         onLongPress: () async {
                           if (await canLaunch(snapshot.data.hdurl)) {

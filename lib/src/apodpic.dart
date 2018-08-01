@@ -7,6 +7,7 @@ class Apodpic {
   final String serviceVersion;
   final String title;
   final String url;
+  final bool isFavorite;
 
   const Apodpic(
       {this.copyright,
@@ -16,7 +17,8 @@ class Apodpic {
       this.mediaType,
       this.serviceVersion,
       this.title,
-      this.url});
+      this.url, 
+      this.isFavorite});
 
   factory Apodpic.fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -29,6 +31,21 @@ class Apodpic {
         mediaType: json['media_type'],
         serviceVersion: json['service_version'],
         title: json['title'],
-        url: json['url']);
+        url: json['url'],
+        isFavorite: false);
+  }
+
+  Map<String, dynamic> toMap(){
+    var map = Map<String, dynamic>();
+    map['PIC_DATE'] = date;
+    map['TITLE'] = title;
+    map['EXPLANATION'] = explanation;
+    map['COPYRIGHT'] = copyright;
+    map['URL'] = url;
+    map['HDURL'] = hdurl;
+    map['IS_FAVORITE'] = isFavorite;
+    map['SERVICE_VERSION'] = serviceVersion;
+    map['MEDIA_TYPE'] = mediaType;
+    return map;
   }
 }
