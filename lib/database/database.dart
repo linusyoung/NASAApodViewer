@@ -1,4 +1,4 @@
-import 'package:apod_viewer/src/apodpic.dart';
+import 'package:apod_viewer/model/apodpic.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -6,9 +6,7 @@ import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'dart:io';
 
-import 'package:apod_viewer/model/model.dart';
-
-class FavoriteDatabase{
+class FavoriteDatabase {
   static final FavoriteDatabase _instance = FavoriteDatabase._internal();
 
   factory FavoriteDatabase() => _instance;
@@ -16,66 +14,75 @@ class FavoriteDatabase{
   static Database _db;
 
   Future<Database> get db async {
-    if (_db != null){
+    if (_db != null) {
       return _db;
     } else {
-      _db = await initDB();
+      _db = await initDb();
       return _db;
     }
   }
 
   FavoriteDatabase._internal();
 
-  Future<Database> initDB() async {
+  initDb() async {
     Directory documentDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentDirectory.path,"main.db");
+    String path = join(documentDirectory.path, "main.db");
     var theDb = await openDatabase(path, version: 1, onCreate: _onCreate);
     return theDb;
   }
 
   void _onCreate(Database db, int version) async {
-    await db.execute('''
-      "CREATE TABLE Favorite(
-        PIC_DATE STRING PRIMARY KEY,
-        TITLE TEXT,
-        COPYRIGHT TEXT,
-        EXPLANATION TEXT,
-        URL TEXT,
-        HDURL TEXT,
-        MEDIA_TYPE TEXT,
-        SERVICE_VERSION TEXT,
-        IS_FAVORITE BIT)"
-    ''');
+    await db.execute('''CREATE TABLE Favorite (
+        pic_date TEXT PRIMARY KEY,
+        title TEXT,
+        copyright TEXT,
+        explanation TEXT,
+        url TEXT,
+        hdurl TEXT,
+        media_type TEXT,
+        service_version TEXT,
+        is_favorite BIT)''');
     print('Database Was Created');
   }
 
   Future<int> addFavorite(Apodpic apod) async {
     var dbClient = await db;
-    try{
-      int res = await dbClient.insert("Favorite", apod.toMap());
+    int res;
+    List<Map> exist = await dbClient
+        .query("Favorite", where: "pic_date = ?", whereArgs: [apod.date]);
+    if (exist.length == 0) {
+      res = await dbClient.insert("Favorite", apod.toMap());
       print('Favorite added $res');
-      return res;
-    } catch(e){
-      int res = await updateFavorite(apod);
-      return res;
+    } else {
+      res = await updateFavorite(apod);
     }
+    return res;
   }
 
   Future<int> deleteFavorite(String date) async {
     var dbClient = await db;
-    int res = await dbClient.delete("Favorite", where: "PIC_DATE = ?", whereArgs: [date]);
+    int res = await dbClient
+        .delete("Favorite", where: "pic_date = ?", whereArgs: [date]);
     print('Favorite was deleted $res');
     return res;
   }
 
-  Future<int> updateFavorite(Apodpic apod) async{
+  Future<int> updateFavorite(Apodpic apod) async {
     var dbClient = await db;
-    int res = await dbClient.update("Favorite", apod.toMap(), where: "PIC_DATE = ?", whereArgs: [apod.date]);
+    int res = await dbClient.update("Favorite", apod.toMap(),
+        where: "pic_date = ?", whereArgs: [apod.date]);
     print('Favorite was updated $res');
     return res;
   }
 
-  Future closeDb() async{
+  isFavorite(String date) async {
+    var dbClient = await db;
+    List<Map> favorite = await dbClient
+        .query("Favorite", where: "pic_date = ?", whereArgs: [date]);
+    return favorite.length;
+  }
+
+  Future closeDb() async {
     var dbClient = await db;
     dbClient.close();
   }

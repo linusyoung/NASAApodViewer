@@ -1,3 +1,4 @@
+//TODO: move this to model.dart
 class Apodpic {
   final String copyright;
   final String date;
@@ -17,7 +18,7 @@ class Apodpic {
       this.mediaType,
       this.serviceVersion,
       this.title,
-      this.url, 
+      this.url,
       this.isFavorite});
 
   factory Apodpic.fromJson(Map<String, dynamic> json) {
@@ -25,7 +26,8 @@ class Apodpic {
 
     return Apodpic(
         date: json['date'],
-        copyright: json['copyright'] == null? '' : '\u00a9' + json['copyright'],
+        copyright:
+            json['copyright'] == null ? '' : '\u00a9' + json['copyright'],
         explanation: json['explanation'],
         hdurl: json['hdurl'],
         mediaType: json['media_type'],
@@ -35,17 +37,17 @@ class Apodpic {
         isFavorite: false);
   }
 
-  Map<String, dynamic> toMap(){
+  Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
-    map['PIC_DATE'] = date;
-    map['TITLE'] = title;
-    map['EXPLANATION'] = explanation;
-    map['COPYRIGHT'] = copyright;
-    map['URL'] = url;
-    map['HDURL'] = hdurl;
-    map['IS_FAVORITE'] = isFavorite;
-    map['SERVICE_VERSION'] = serviceVersion;
-    map['MEDIA_TYPE'] = mediaType;
+    map['pic_date'] = date;
+    map['title'] = title;
+    map['explanation'] = explanation;
+    map['copyright'] = copyright;
+    map['url'] = url;
+    map['hdurl'] = hdurl;
+    map['is_favorite'] = isFavorite;
+    map['service_version'] = serviceVersion;
+    map['media_type'] = mediaType;
     return map;
   }
 }

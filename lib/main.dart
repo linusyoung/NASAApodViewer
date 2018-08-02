@@ -1,3 +1,4 @@
+import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/src/NASAApi.dart';
 import 'package:apod_viewer/src/content_body.dart';
 import 'package:apod_viewer/src/data_fetch.dart';
@@ -7,7 +8,6 @@ import 'dart:async';
 
 void main() => runApp(new MyApp());
 
-// final NASAApi nasaApi;
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -36,10 +36,13 @@ class _MyHomePageState extends State<MyHomePage> {
   String _picDate = DateTime.now().toLocal().toString().substring(0, 10);
   bool _isShakable = false;
   bool _isFavorite = false;
+  FavoriteDatabase db;
 
   @override
   void initState() {
     super.initState();
+    db = FavoriteDatabase();
+    db.initDb();
     accelerometerEvents.listen((AccelerometerEvent event) {
       if (event.x.abs() >= 3.0 && !_isShakable) {
         setState(() {
@@ -54,6 +57,12 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    db.closeDb();
+    super.dispose();
   }
 
   @override
@@ -76,6 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     _selectedDate = value;
                     setState(() {
                       _picDate = value.toString().substring(0, 10);
+                      _isFavorite = db.isFavorite(_picDate);
                     });
                   }
                 });
@@ -91,14 +101,20 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: ListView(children: <Widget>[
-        ContentBody(picDate: _picDate),
+        ContentBody(
+          picDate: _picDate,
+          db: db,
+          addFavorite: _isFavorite,
+        ),
       ]),
       floatingActionButton: FloatingActionButton(
-        child: _isFavorite ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
-        onPressed: (){
-          setState(() => _isFavorite = !_isFavorite);
-        }),
+          child:
+              _isFavorite ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
+          onPressed: () {
+            setState(() {
+              _isFavorite = !_isFavorite;
+            });
+          }),
     );
   }
-
 }

@@ -1,5 +1,5 @@
 import 'package:apod_viewer/database/database.dart';
-import 'package:apod_viewer/src/apodpic.dart';
+import 'package:apod_viewer/model/apodpic.dart';
 import 'package:apod_viewer/src/data_fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -8,13 +8,22 @@ import 'package:url_launcher/url_launcher.dart';
 class ContentBody extends StatefulWidget {
   final String picDate;
   final FavoriteDatabase db;
-  ContentBody({this.picDate, this.db});
+  final bool addFavorite;
+  ContentBody({this.picDate, this.db, this.addFavorite});
+
   @override
   _ContentBody createState() => _ContentBody();
 }
 
 // TODO: handle exceptions from network call properly
 class _ContentBody extends State<ContentBody> {
+  FavoriteDatabase db;
+  @override
+  void initState() {
+    super.initState();
+    db = widget.db;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -24,6 +33,7 @@ class _ContentBody extends State<ContentBody> {
             future: getApodData(widget.picDate),
             builder: (_, snapshot) {
               if (snapshot.hasData) {
+                db.addFavorite(snapshot.data);
                 return Column(
                   children: <Widget>[
                     Padding(
@@ -39,7 +49,6 @@ class _ContentBody extends State<ContentBody> {
                                   fontWeight: FontWeight.bold, fontSize: 20.0),
                             ),
                           ),
-                          // CircularProgressIndicator(),
                         ],
                       ),
                     ),
@@ -52,9 +61,8 @@ class _ContentBody extends State<ContentBody> {
                               snapshot.data.date,
                               style: TextStyle(),
                             ),
-                            // TODO: handle non copyright layout better
+                            // TODO: handle non copyright layout better/overflow copyright
                             Text(snapshot.data.copyright),
-                            // CircularProgressIndicator(),
                           ]),
                     ),
                     Padding(
@@ -84,6 +92,7 @@ class _ContentBody extends State<ContentBody> {
                   ],
                 );
               } else if (snapshot.hasError) {
+                // TODO: build widget to display when error incurred.
                 return Text("${snapshot.error}");
               }
               return CircularProgressIndicator();

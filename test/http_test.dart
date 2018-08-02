@@ -7,7 +7,6 @@
 import 'dart:convert' as json;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:apod_viewer/src/apodpic.dart';
 import 'package:apod_viewer/src/NASAApi.dart';
 
 void main() {
