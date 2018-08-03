@@ -1,14 +1,16 @@
 import 'dart:async';
 
-import 'package:apod_viewer/database/database.dart';
-import 'package:apod_viewer/model/apodpic.dart';
-import 'package:apod_viewer/src/NASAApi.dart';
-import 'package:apod_viewer/src/data_fetch.dart';
+import 'package:async_loader/async_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:sensors/sensors.dart';
 import 'package:simple_coverflow/simple_coverflow.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'package:apod_viewer/database/database.dart';
+import 'package:apod_viewer/model/apod_model.dart';
+import 'package:apod_viewer/src/NASAApi.dart';
+import 'package:apod_viewer/src/data_fetch.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -24,10 +26,11 @@ class _MyHomePageState extends State<MyHomePage> {
   String _picDate = DateTime.now().toLocal().toString().substring(0, 10);
   // bool _isShakable = false;
   FavoriteDatabase db;
-  Apodpic apodpic;
+  Apod apod;
+  final _asyncLoaderState = GlobalKey<AsyncLoaderState>();
 
-  List<Apodpic> favoriteList = List();
-  List<Apodpic> cacheFavoriteList = List();
+  List<Apod> favoriteList = List();
+  List<Apod> cacheFavoriteList = List();
 
   @override
   void initState() {
@@ -60,84 +63,50 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var _asyncLoader = AsyncLoader(
+      key: _asyncLoaderState,
+      initState: () async {
+        apod = await getApodData(_picDate, db);
+      },
+      renderLoad: () => Center(child: CircularProgressIndicator()),
+      renderError: ([error]) => Text(
+          'Sorry, there was an error when loading APOD data. Please try other date.'),
+      renderSuccess: ({data}) {
+        return _getApodContent();
+      },
+    );
     return Scaffold(
-      appBar: getAppBar(),
-      body: ListView(
-        children: <Widget>[
-          Center(
-            child: FutureBuilder<Apodpic>(
-              future: getApodData(_picDate, db),
-              builder: (_, snapshot) {
-                if (snapshot.hasData) {
-                  apodpic = snapshot.data;
-                  return Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Flexible(
-                              child: Text(
-                                apodpic.title,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20.0),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              Text(
-                                apodpic.date,
-                                style: TextStyle(),
-                              ),
-                              // TODO: handle non copyright layout better/overflow copyright
-                              Text(apodpic.copyright),
-                            ]),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                        child: GestureDetector(
-                          child: FadeInImage.memoryNetwork(
-                            placeholder: kTransparentImage,
-                            image: snapshot.data.url,
-                            fit: BoxFit.fitWidth,
-                            fadeInDuration: Duration(milliseconds: 400),
-                          ),
-                          onLongPress: () async {
-                            if (await canLaunch(snapshot.data.hdurl)) {
-                              launch(snapshot.data.hdurl);
-                            }
-                          },
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                          snapshot.data.explanation,
-                          softWrap: true,
-                          textAlign: TextAlign.justify,
-                        ),
-                      ),
-                    ],
-                  );
-                } else if (snapshot.hasError) {
-                  // TODO: build widget to display when error incurred.
-                  return Text("${snapshot.error}");
-                }
-                return CircularProgressIndicator();
-              },
-            ),
+      appBar: AppBar(
+        title: Text(widget.title),
+        titleSpacing: 1.0,
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.date_range),
+              onPressed: () {
+                showDatePicker(
+                  context: context,
+                  firstDate: NASAApi.minDate,
+                  lastDate: NASAApi.maxDate,
+                  initialDate: _selectedDate,
+                ).then((DateTime value) {
+                  if (value != null) {
+                    _selectedDate = value;
+                    _picDate = value.toString().substring(0, 10);
+                    _asyncLoaderState.currentState.reloadState();
+                  }
+                });
+              }),
+          IconButton(
+            icon: Icon(Icons.share),
+            onPressed: () {},
           ),
         ],
+        leading: IconButton(
+          icon: Icon(Icons.list),
+          onPressed: _showFavorite,
+        ),
       ),
+      body: _asyncLoader,
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.favorite),
           onPressed: () async {
@@ -150,62 +119,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
             );
-            apodpic.isFavorite = true;
-            await db.addFavorite(apodpic);
+            apod.isFavorite = true;
+            await db.addFavorite(apod);
             await setupList();
             print("list lenght: ${cacheFavoriteList.length}");
             Scaffold.of(context).showSnackBar(snackBar);
           }),
     );
-  }
-
-  AppBar getAppBar() {
-    return AppBar(
-      title: Text(widget.title),
-      titleSpacing: 1.0,
-      actions: <Widget>[
-        IconButton(
-            icon: Icon(Icons.date_range),
-            onPressed: () {
-              showDatePicker(
-                context: context,
-                firstDate: NASAApi.minDate,
-                lastDate: NASAApi.maxDate,
-                initialDate: _selectedDate,
-              ).then((DateTime value) {
-                if (value != null) {
-                  _selectedDate = value;
-                  setState(() {
-                    _picDate = value.toString().substring(0, 10);
-                  });
-                }
-              });
-            }),
-        IconButton(
-          icon: Icon(Icons.share),
-          onPressed: () {},
-        ),
-      ],
-      leading: IconButton(
-        icon: Icon(Icons.list),
-        onPressed: _showFavorite,
-      ),
-    );
-  }
-
-  // TODO: favorite icon is not changed based on database.
-  Widget checkFavorite() {
-    Icon icon;
-    setState(() {
-      if (apodpic == null) {
-        icon = Icon(Icons.favorite);
-      } else {
-        icon = apodpic.isFavorite
-            ? Icon(Icons.favorite)
-            : Icon(Icons.favorite_border);
-      }
-    });
-    return icon;
   }
 
   Future setupList() async {
@@ -216,6 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+// TODO: move favorite to a separate class
   void _showFavorite() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) {
@@ -278,5 +199,82 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       return cards[index % cards.length];
     }
+  }
+
+  Widget _getApodContent() {
+    var titleWidget = Text(
+      apod.title,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+    );
+    var dateWidget = Text(
+      apod.date,
+      style: TextStyle(),
+    );
+    var copyrightWidget = Text(
+      apod.copyright,
+      overflow: TextOverflow.ellipsis,
+    );
+    var imageWidget = GestureDetector(
+      child: FadeInImage.memoryNetwork(
+        placeholder: kTransparentImage,
+        image: apod.url,
+        fit: BoxFit.fitWidth,
+        fadeInDuration: Duration(milliseconds: 400),
+      ),
+      onLongPress: () async {
+        if (await canLaunch(apod.hdurl)) {
+          launch(apod.hdurl);
+        }
+      },
+    );
+
+    var explanationWidget = Text(
+      apod.explanation,
+      softWrap: true,
+      textAlign: TextAlign.justify,
+    );
+
+    return ListView(
+      children: <Widget>[
+        Center(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Flexible(
+                      child: titleWidget,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    dateWidget,
+                    Flexible(
+                      child: copyrightWidget,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                child: imageWidget,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: explanationWidget,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }

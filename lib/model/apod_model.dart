@@ -1,5 +1,4 @@
-//TODO: move this to model.dart
-class Apodpic {
+class Apod {
   final String copyright;
   final String date;
   final String explanation;
@@ -10,7 +9,7 @@ class Apodpic {
   final String url;
   bool isFavorite;
 
-  Apodpic(
+  Apod(
       {this.copyright,
       this.date,
       this.explanation,
@@ -21,10 +20,10 @@ class Apodpic {
       this.url,
       this.isFavorite});
 
-  factory Apodpic.fromJson(Map<String, dynamic> json) {
+  factory Apod.fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
 
-    return Apodpic(
+    return Apod(
         date: json['date'],
         copyright: json['copyright'] == null ? '' : json['copyright'],
         explanation: json['explanation'],
@@ -36,8 +35,8 @@ class Apodpic {
         isFavorite: false);
   }
 
-  factory Apodpic.fromDb(Map map) {
-    return Apodpic(
+  factory Apod.fromDb(Map map) {
+    return Apod(
         date: map['date'],
         copyright: map['copyright'] == null ? '' : map['copyright'],
         explanation: map['explanation'],

@@ -2,12 +2,13 @@ import 'dart:async';
 import 'dart:convert' as json;
 import 'dart:math';
 
-import 'package:apod_viewer/database/database.dart';
-import 'package:apod_viewer/model/apodpic.dart';
-import 'package:apod_viewer/src/NASAApi.dart';
 import 'package:http/http.dart' as http;
 
-Future<Apodpic> getApodData(String date, FavoriteDatabase db) async {
+import 'package:apod_viewer/database/database.dart';
+import 'package:apod_viewer/model/apod_model.dart';
+import 'package:apod_viewer/src/NASAApi.dart';
+
+Future<Apod> getApodData(String date, FavoriteDatabase db) async {
   var apod = await db.getApod(date);
   if (apod == null) {
     final apiCall = NASAApi(date: date);
@@ -16,7 +17,7 @@ Future<Apodpic> getApodData(String date, FavoriteDatabase db) async {
 
     if (res.statusCode == 200) {
       final parsed = json.jsonDecode(res.body);
-      return Apodpic.fromJson(parsed);
+      return Apod.fromJson(parsed);
     } else {
       throw Exception('Fail to get pictures;');
     }

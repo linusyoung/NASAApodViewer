@@ -1,10 +1,11 @@
-import 'package:apod_viewer/model/apodpic.dart';
+import 'dart:async';
+import 'dart:io';
+
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'dart:async';
-import 'dart:io';
+import 'package:apod_viewer/model/apod_model.dart';
 
 class FavoriteDatabase {
   static final FavoriteDatabase _instance = FavoriteDatabase._internal();
@@ -42,17 +43,19 @@ class FavoriteDatabase {
         media_type TEXT,
         service_version TEXT,
         is_favorite BIT)''');
-    print('Database Was Created');
+    // TODO: remove debug text
+    // print('Database Was Created');
   }
 
-  Future<int> addFavorite(Apodpic apod) async {
+  Future<int> addFavorite(Apod apod) async {
     var dbClient = await db;
     int res;
     List<Map> exist = await dbClient
         .query("Favorite", where: "date = ?", whereArgs: [apod.date]);
     if (exist.length == 0) {
       res = await dbClient.insert("Favorite", apod.toMap());
-      print('Favorite added $res');
+      // TODO: remove debug text
+      // print('Favorite added $res');
     } else {
       res = await updateFavorite(apod);
     }
@@ -63,36 +66,40 @@ class FavoriteDatabase {
     var dbClient = await db;
     int res =
         await dbClient.delete("Favorite", where: "date = ?", whereArgs: [date]);
-    print('Favorite was deleted $res');
+    // TODO: remove debug text
+    // print('Favorite was deleted $res');
     return res;
   }
 
-  Future<int> updateFavorite(Apodpic apod) async {
+  Future<int> updateFavorite(Apod apod) async {
     var dbClient = await db;
     int res = await dbClient.update("Favorite", apod.toMap(),
         where: "date = ?", whereArgs: [apod.date]);
-    print('Favorite was updated $res for ${apod.date} with ${apod.isFavorite}');
+    // TODO: remove debug text
+    // print('Favorite was updated $res for ${apod.date} with ${apod.isFavorite}');
     return res;
   }
 
-  Future<Apodpic> getApod(String date) async {
+  Future<Apod> getApod(String date) async {
     var dbClient = await db;
-    Apodpic apod;
+    Apod apod;
     List<Map> favorite =
         await dbClient.query("Favorite", where: "date = ?", whereArgs: [date]);
     if (favorite.length > 0) {
-      apod = Apodpic.fromDb(favorite[0]);
-      print('Date $date, Favorite ${apod.isFavorite}');
+      apod = Apod.fromDb(favorite[0]);
+      // TODO: remove debug text
+      // print('Date $date, Favorite ${apod.isFavorite}');
     }
     return apod;
   }
 
-  Future<List<Apodpic>> getFavoriteApodList() async {
+  Future<List<Apod>> getFavoriteApodList() async {
     var dbClient = await db;
     List<Map> res = await dbClient
         .query("Favorite", where: "is_favorite = ?", whereArgs: [1]);
-    print('true lenght: ${res.map((a) => Apodpic.fromDb(a)).toList().length}');
-    return res.map((a) => Apodpic.fromDb(a)).toList();
+    // TODO: remove debug text
+    // print('true lenght: ${res.map((a) => Apodpic.fromDb(a)).toList().length}');
+    return res.map((a) => Apod.fromDb(a)).toList();
   }
 
   Future closeDb() async {
