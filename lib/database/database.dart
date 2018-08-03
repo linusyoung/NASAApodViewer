@@ -33,7 +33,7 @@ class FavoriteDatabase {
 
   void _onCreate(Database db, int version) async {
     await db.execute('''CREATE TABLE Favorite (
-        pic_date TEXT PRIMARY KEY,
+        date TEXT PRIMARY KEY,
         title TEXT,
         copyright TEXT,
         explanation TEXT,
@@ -49,7 +49,7 @@ class FavoriteDatabase {
     var dbClient = await db;
     int res;
     List<Map> exist = await dbClient
-        .query("Favorite", where: "pic_date = ?", whereArgs: [apod.date]);
+        .query("Favorite", where: "date = ?", whereArgs: [apod.date]);
     if (exist.length == 0) {
       res = await dbClient.insert("Favorite", apod.toMap());
       print('Favorite added $res');
@@ -61,8 +61,8 @@ class FavoriteDatabase {
 
   Future<int> deleteFavorite(String date) async {
     var dbClient = await db;
-    int res = await dbClient
-        .delete("Favorite", where: "pic_date = ?", whereArgs: [date]);
+    int res =
+        await dbClient.delete("Favorite", where: "date = ?", whereArgs: [date]);
     print('Favorite was deleted $res');
     return res;
   }
@@ -70,16 +70,21 @@ class FavoriteDatabase {
   Future<int> updateFavorite(Apodpic apod) async {
     var dbClient = await db;
     int res = await dbClient.update("Favorite", apod.toMap(),
-        where: "pic_date = ?", whereArgs: [apod.date]);
-    print('Favorite was updated $res');
+        where: "date = ?", whereArgs: [apod.date]);
+    print('Favorite was updated $res for ${apod.date} with ${apod.isFavorite}');
     return res;
   }
 
-  isFavorite(String date) async {
+  Future<Apodpic> getApod(String date) async {
     var dbClient = await db;
-    List<Map> favorite = await dbClient
-        .query("Favorite", where: "pic_date = ?", whereArgs: [date]);
-    return favorite.length;
+    Apodpic apod;
+    List<Map> favorite =
+        await dbClient.query("Favorite", where: "date = ?", whereArgs: [date]);
+    if (favorite.length > 0) {
+      apod = Apodpic.fromDb(favorite[0]);
+      print('Date $date, Favorite ${apod.isFavorite}');
+    }
+    return apod;
   }
 
   Future closeDb() async {

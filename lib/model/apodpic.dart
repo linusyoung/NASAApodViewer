@@ -8,9 +8,9 @@ class Apodpic {
   final String serviceVersion;
   final String title;
   final String url;
-  final bool isFavorite;
+  bool isFavorite;
 
-  const Apodpic(
+  Apodpic(
       {this.copyright,
       this.date,
       this.explanation,
@@ -37,9 +37,22 @@ class Apodpic {
         isFavorite: false);
   }
 
+  factory Apodpic.fromDb(Map map) {
+    return Apodpic(
+        date: map['date'],
+        copyright: map['copyright'] == null ? '' : '\u00a9' + map['copyright'],
+        explanation: map['explanation'],
+        hdurl: map['hdurl'],
+        mediaType: map['media_type'],
+        serviceVersion: map['service_version'],
+        title: map['title'],
+        url: map['url'],
+        isFavorite: map['is_favorite'] == 1 ? true : false);
+  }
+
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
-    map['pic_date'] = date;
+    map['date'] = date;
     map['title'] = title;
     map['explanation'] = explanation;
     map['copyright'] = copyright;
