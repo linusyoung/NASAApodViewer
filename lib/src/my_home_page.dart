@@ -6,6 +6,7 @@ import 'package:apod_viewer/src/NASAApi.dart';
 import 'package:apod_viewer/src/data_fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:sensors/sensors.dart';
+import 'package:simple_coverflow/simple_coverflow.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -217,44 +218,65 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _showFavorite() {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          final tiles = favoriteList.map(
-            (apod) {
-              return ListTile(
-                title: Text(
-                  apod.title,
-                ),
-              );
-            },
-          );
-          final divided = ListTile.divideTiles(
-            context: context,
-            tiles: tiles,
-          ).toList();
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Favorite'),
-            ),
-            body: ListView(children: divided),
-          );
-        },
-      ),
+      MaterialPageRoute(builder: (context) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Favorite'),
+          ),
+          body: CoverFlow(
+            itemBuilder: favoriteBuilder,
+          ),
+        );
+      }),
     );
   }
-}
 
-//   final tiles = _saved.map(
-//     (pair) {
-//       return ListTile(
-//         title: Text(
-//           pair.asPascalCase,
-//           style: _biggerFont,
-//         ),
-//       );
-//     },
-//   );
-//   final divided = ListTile.divideTiles(
-//     context: context,
-//     tiles: tiles,
-//   ).toList();
+  Widget favoriteBuilder(BuildContext context, int index) {
+    final cards = favoriteList.map(
+      (apod) {
+        var titleWidget = Text(apod.title);
+        var dateWidget = Text(apod.date);
+        var explanationWidget = Expanded(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                apod.explanation,
+                textAlign: TextAlign.justify,
+              ),
+            ),
+          ),
+        );
+        var pictureWidget = FadeInImage.memoryNetwork(
+          placeholder: kTransparentImage,
+          image: apod.url,
+          fit: BoxFit.fitHeight,
+        );
+        return Container(
+          child: Card(
+              margin: EdgeInsets.only(
+                top: 8.0,
+                bottom: 8.0,
+              ),
+              child: Column(
+                children: <Widget>[
+                  dateWidget,
+                  titleWidget,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: pictureWidget,
+                  ),
+                  explanationWidget,
+                ],
+              )),
+        );
+      },
+    ).toList();
+
+    if (cards.length == 0) {
+      return new Container();
+    } else {
+      return cards[index % cards.length];
+    }
+  }
+}
