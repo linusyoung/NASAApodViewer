@@ -1,5 +1,6 @@
-import 'package:apod_viewer/src/my_home_page.dart';
 import 'package:flutter/material.dart';
+
+import 'package:apod_viewer/src/home_page.dart';
 
 void main() => runApp(new MyApp());
 
