@@ -87,6 +87,14 @@ class FavoriteDatabase {
     return apod;
   }
 
+  Future<List<Apodpic>> getFavoriteApodList() async {
+    var dbClient = await db;
+    List<Map> res = await dbClient
+        .query("Favorite", where: "is_favorite = ?", whereArgs: [1]);
+    print('true lenght: ${res.map((a) => Apodpic.fromDb(a)).toList().length}');
+    return res.map((a) => Apodpic.fromDb(a)).toList();
+  }
+
   Future closeDb() async {
     var dbClient = await db;
     dbClient.close();

@@ -21,28 +21,34 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   DateTime _selectedDate = DateTime.now();
   String _picDate = DateTime.now().toLocal().toString().substring(0, 10);
-  bool _isShakable = false;
+  // bool _isShakable = false;
   FavoriteDatabase db;
   Apodpic apodpic;
+
+  List<Apodpic> favoriteList = List();
+  List<Apodpic> cacheFavoriteList = List();
 
   @override
   void initState() {
     super.initState();
     db = FavoriteDatabase();
     db.initDb();
-    accelerometerEvents.listen((AccelerometerEvent event) {
-      if (event.x.abs() >= 3.0 && !_isShakable) {
-        setState(() {
-          _picDate = getRandomDate();
-          _isShakable = true;
-        });
-      }
-      if (_isShakable) {
-        Timer(Duration(milliseconds: 4000), () {
-          _isShakable = false;
-        });
-      }
-    });
+    favoriteList = [];
+    cacheFavoriteList = [];
+    // TODO: shake disabled. better implementation later.
+    // accelerometerEvents.listen((AccelerometerEvent event) {
+    //   if (event.x.abs() >= 3.0 && !_isShakable) {
+    //     setState(() {
+    //       _picDate = getRandomDate();
+    //       _isShakable = true;
+    //     });
+    //   }
+    //   if (_isShakable) {
+    //     Timer(Duration(milliseconds: 4000), () {
+    //       _isShakable = false;
+    //     });
+    //   }
+    // });
   }
 
   @override
@@ -55,10 +61,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: getAppBar(),
-      body: Center(
-        child: ListView(
-          children: <Widget>[
-            FutureBuilder<Apodpic>(
+      body: ListView(
+        children: <Widget>[
+          Center(
+            child: FutureBuilder<Apodpic>(
               future: getApodData(_picDate, db),
               builder: (_, snapshot) {
                 if (snapshot.hasData) {
@@ -128,12 +134,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 return CircularProgressIndicator();
               },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.favorite),
-          onPressed: () {
+          onPressed: () async {
             final snackBar = SnackBar(
               content: Text('Favorite Added!'),
               action: SnackBarAction(
@@ -143,8 +149,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
             );
+            apodpic.isFavorite = true;
+            await db.addFavorite(apodpic);
+            await setupList();
+            print("list lenght: ${cacheFavoriteList.length}");
             Scaffold.of(context).showSnackBar(snackBar);
-            db.addFavorite(apodpic);
           }),
     );
   }
@@ -178,12 +187,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
       leading: IconButton(
         icon: Icon(Icons.list),
-        onPressed: () {},
+        onPressed: _showFavorite,
       ),
     );
   }
 
-// TODO: favorite icon is not changed based on database.
+  // TODO: favorite icon is not changed based on database.
   Widget checkFavorite() {
     Icon icon;
     setState(() {
@@ -197,4 +206,55 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     return icon;
   }
+
+  Future setupList() async {
+    favoriteList = await db.getFavoriteApodList();
+    print(cacheFavoriteList.length);
+    setState(() {
+      cacheFavoriteList = favoriteList;
+    });
+  }
+
+  void _showFavorite() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          final tiles = favoriteList.map(
+            (apod) {
+              return ListTile(
+                title: Text(
+                  apod.title,
+                ),
+              );
+            },
+          );
+          final divided = ListTile.divideTiles(
+            context: context,
+            tiles: tiles,
+          ).toList();
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Favorite'),
+            ),
+            body: ListView(children: divided),
+          );
+        },
+      ),
+    );
+  }
 }
+
+//   final tiles = _saved.map(
+//     (pair) {
+//       return ListTile(
+//         title: Text(
+//           pair.asPascalCase,
+//           style: _biggerFont,
+//         ),
+//       );
+//     },
+//   );
+//   final divided = ListTile.divideTiles(
+//     context: context,
+//     tiles: tiles,
+//   ).toList();

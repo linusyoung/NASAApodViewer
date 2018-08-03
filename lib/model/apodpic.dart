@@ -26,8 +26,7 @@ class Apodpic {
 
     return Apodpic(
         date: json['date'],
-        copyright:
-            json['copyright'] == null ? '' : '\u00a9' + json['copyright'],
+        copyright: json['copyright'] == null ? '' : json['copyright'],
         explanation: json['explanation'],
         hdurl: json['hdurl'],
         mediaType: json['media_type'],
@@ -40,7 +39,7 @@ class Apodpic {
   factory Apodpic.fromDb(Map map) {
     return Apodpic(
         date: map['date'],
-        copyright: map['copyright'] == null ? '' : '\u00a9' + map['copyright'],
+        copyright: map['copyright'] == null ? '' : map['copyright'],
         explanation: map['explanation'],
         hdurl: map['hdurl'],
         mediaType: map['media_type'],
