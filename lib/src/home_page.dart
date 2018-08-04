@@ -24,7 +24,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   DateTime _selectedDate = DateTime.now();
   String _picDate = DateTime.now().toLocal().toString().substring(0, 10);
-  // bool _isShakable = false;
+  bool _isShakable;
   FavoriteDatabase db;
   Apod apod;
   final _asyncLoaderState = GlobalKey<AsyncLoaderState>();
@@ -39,20 +39,15 @@ class _MyHomePageState extends State<MyHomePage> {
     db.initDb();
     favoriteList = [];
     cacheFavoriteList = [];
-    // TODO: shake disabled. better implementation later.
-    // accelerometerEvents.listen((AccelerometerEvent event) {
-    //   if (event.x.abs() >= 3.0 && !_isShakable) {
-    //     setState(() {
-    //       _picDate = getRandomDate();
-    //       _isShakable = true;
-    //     });
-    //   }
-    //   if (_isShakable) {
-    //     Timer(Duration(milliseconds: 4000), () {
-    //       _isShakable = false;
-    //     });
-    //   }
-    // });
+    _isShakable = true;
+    accelerometerEvents.listen((AccelerometerEvent event) async {
+      if ((event.x.abs() >= 10 && event.y.abs() >= 10) && _isShakable) {
+        _picDate = getRandomDate();
+        _asyncLoaderState.currentState.reloadState();
+        _isShakable = false;
+        await Future.delayed(Duration(seconds: 10), () => _isShakable = true);
+      }
+    });
   }
 
   @override
