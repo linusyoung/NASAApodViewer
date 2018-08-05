@@ -27,7 +27,6 @@ void main() {
   }, skip: true);
 
   test('url update', () async {
-    await getYoutubeVideoUrl('https://www.youtube.com/embed/8i8-IuYoz24?rel=0');
     //   // expect(
     //   //     getYoutubeVideoUrl('https://www.youtube.com/embed/8i8-IuYoz24?rel=0'),
     //   //     'https://www.youtube.com/watch?v=8i8-IuYoz24');
