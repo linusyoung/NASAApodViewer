@@ -33,3 +33,18 @@ String getRandomDate() {
   final int dateDiff = Random().nextInt(randomRange.inDays);
   return minDate.add(Duration(days: dateDiff)).toString().substring(0, 10);
 }
+
+// Future<String> getYoutubeVideoUrl(String url) async {
+//   const ytApiUrl = 'http://you-link.herokuapp.com/?url=';
+//   // TODO: using regex to handle url in Nasa Api
+//   var reqUrl = url.replaceAll("embed/", "watch?v=");
+//   reqUrl = reqUrl.replaceAll("?rel=0", "");
+//   final res = await http.get(ytApiUrl + reqUrl);
+//   if (res.statusCode == 200) {
+//     final parsed = json.jsonDecode(res.body);
+//     // TODO: only return first url at the moment.
+//     return parsed[0]['url'];
+//   } else {
+//     throw Exception('video link is not found.');
+//   }
+// }

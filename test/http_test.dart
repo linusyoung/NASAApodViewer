@@ -8,6 +8,7 @@ import 'dart:convert' as json;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:apod_viewer/src/NASAApi.dart';
+import 'package:apod_viewer/src/data_util.dart';
 
 void main() {
   // test('Get picture json from NASA', () async {
@@ -21,7 +22,14 @@ void main() {
   //     expect(apod.date, '2018-07-26');
   //   }
   // },skip: true);
-  test('get right date', (){
-    expect(DateTime.now().toLocal().toString().substring(0,10),'2018-07-28');   
+  test('get right date', () {
+    expect(DateTime.now().toLocal().toString().substring(0, 10), '2018-07-28');
+  }, skip: true);
+
+  test('url update', () async {
+    await getYoutubeVideoUrl('https://www.youtube.com/embed/8i8-IuYoz24?rel=0');
+    //   // expect(
+    //   //     getYoutubeVideoUrl('https://www.youtube.com/embed/8i8-IuYoz24?rel=0'),
+    //   //     'https://www.youtube.com/watch?v=8i8-IuYoz24');
   });
 }

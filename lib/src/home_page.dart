@@ -37,6 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     db = FavoriteDatabase();
     db.initDb();
+
     favoriteList = [];
     cacheFavoriteList = [];
     _isShakable = true;
@@ -48,6 +49,11 @@ class _MyHomePageState extends State<MyHomePage> {
         await Future.delayed(Duration(seconds: 10), () => _isShakable = true);
       }
     });
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
   }
 
   @override
@@ -123,19 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
       apod.copyright,
       overflow: TextOverflow.ellipsis,
     );
-    var imageWidget = GestureDetector(
-      child: FadeInImage.memoryNetwork(
-        placeholder: kTransparentImage,
-        image: apod.url,
-        fit: BoxFit.fitWidth,
-        fadeInDuration: Duration(milliseconds: 400),
-      ),
-      onLongPress: () async {
-        if (await canLaunch(apod.hdurl)) {
-          launch(apod.hdurl);
-        }
-      },
-    );
+    var mediaWidget = _getMediaWdiget(apod.mediaType);
 
     var explanationWidget = Text(
       apod.explanation,
@@ -173,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                child: imageWidget,
+                child: mediaWidget,
               ),
               Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -184,6 +178,48 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ],
     );
+  }
+
+  Widget _getMediaWdiget(String mediaType) {
+    switch (mediaType) {
+      case "image":
+        return GestureDetector(
+          child: FadeInImage.memoryNetwork(
+            placeholder: kTransparentImage,
+            image: apod.url,
+            fit: BoxFit.fitWidth,
+            fadeInDuration: Duration(milliseconds: 400),
+          ),
+          onLongPress: () async {
+            if (await canLaunch(apod.hdurl)) {
+              launch(apod.hdurl);
+            }
+          },
+        );
+      case "video":
+        return Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Video can be played in Browser only.",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0,
+                ),
+              ),
+            ),
+            RaisedButton(
+              child: Text("Press to launch"),
+              onPressed: () async {
+                if (await canLaunch(apod.url)) {
+                  launch(apod.url);
+                }
+              },
+            ),
+          ],
+        );
+    }
   }
 
   void _displaySnackBar() async {
@@ -211,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-// TODO: move favorite to a separate class
+  // TODO: move favorite to a separate class
   void _showFavorite() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) {
@@ -243,11 +279,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         );
-        var pictureWidget = FadeInImage.memoryNetwork(
-          placeholder: kTransparentImage,
-          image: apod.url,
-          fit: BoxFit.fitHeight,
-        );
+        var pictureWidget = _getMediaWdiget(apod.mediaType);
         return Container(
           child: Card(
               margin: EdgeInsets.only(
