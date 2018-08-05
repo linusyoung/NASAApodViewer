@@ -23,7 +23,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   DateTime _selectedDate = DateTime.now();
-  String _picDate = DateTime.now().toLocal().toString().substring(0, 10);
+  DateTime _picDate = DateTime.now().toLocal();
   bool _isShakable;
   FavoriteDatabase db;
   Apod apod;
@@ -70,8 +70,21 @@ class _MyHomePageState extends State<MyHomePage> {
         apod = await getApodData(_picDate, db);
       },
       renderLoad: () => Center(child: CircularProgressIndicator()),
-      renderError: ([error]) => Text(
-          'Sorry, there was an error when loading APOD data. Please try other date.'),
+      renderError: ([error]) {
+        var errWidget;
+        print(NASAApi.maxDate.difference(_picDate).isNegative);
+
+        if (NASAApi.maxDate.difference(_picDate).isNegative) {
+          // TODO: format error msg
+          errWidget = Text(
+              'Sorry, there was an error when loading APOD data. Please try other date.');
+        } else {
+          errWidget = Center(
+            child: Text('Tomorrow is not coming yet. Please be patient!'),
+          );
+        }
+        return errWidget;
+      },
       renderSuccess: ({data}) {
         return _getApodContent();
       },
@@ -91,8 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   initialDate: _selectedDate,
                 ).then((DateTime value) {
                   if (value != null) {
-                    _selectedDate = value;
-                    _picDate = value.toString().substring(0, 10);
+                    _picDate = value;
                     _asyncLoaderState.currentState.reloadState();
                   }
                 });
@@ -137,46 +149,73 @@ class _MyHomePageState extends State<MyHomePage> {
       textAlign: TextAlign.justify,
     );
 
-    return ListView(
-      children: <Widget>[
-        Center(
-          child: Column(
-            children: <Widget>[
-              Padding(
+    return Dismissible(
+      key: ValueKey(_picDate),
+      onDismissed: (DismissDirection direction) {
+        var _dayDiff = 0;
+        _dayDiff += direction == DismissDirection.endToStart ? 1 : -1;
+        _picDate = _picDate.add(Duration(days: _dayDiff));
+        if (NASAApi.maxDate.difference(_picDate).isNegative) {
+          setState(() {});
+        } else {
+          _asyncLoaderState.currentState.reloadState();
+        }
+      },
+      child: NASAApi.maxDate.difference(_picDate).isNegative
+          ? Center(
+              child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Flexible(
-                      child: titleWidget,
-                    ),
-                  ],
+                child: Text(
+                  'Tomorrow is not coming!\nSwipe back or select a date from Calendar.',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30.0,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    dateWidget,
-                    Flexible(
-                      child: copyrightWidget,
-                    ),
-                  ],
+            )
+          : ListView(
+              children: <Widget>[
+                Center(
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Flexible(
+                              child: titleWidget,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            dateWidget,
+                            Flexible(
+                              child: copyrightWidget,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                        child: mediaWidget,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: explanationWidget,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                child: mediaWidget,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: explanationWidget,
-              ),
-            ],
-          ),
-        ),
-      ],
+              ],
+            ),
     );
   }
 
@@ -209,8 +248,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            RaisedButton(
-              child: Text("Press to launch"),
+            FloatingActionButton(
+              child: Icon(Icons.play_arrow),
               onPressed: () async {
                 if (await canLaunch(apod.url)) {
                   launch(apod.url);

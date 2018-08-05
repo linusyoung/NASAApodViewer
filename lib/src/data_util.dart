@@ -8,7 +8,7 @@ import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/model/apod_model.dart';
 import 'package:apod_viewer/src/NASAApi.dart';
 
-Future<Apod> getApodData(String date, FavoriteDatabase db) async {
+Future<Apod> getApodData(DateTime date, FavoriteDatabase db) async {
   var apod = await db.getApod(date);
   if (apod == null) {
     final apiCall = NASAApi(date: date);
@@ -26,12 +26,16 @@ Future<Apod> getApodData(String date, FavoriteDatabase db) async {
   }
 }
 
-String getRandomDate() {
+DateTime getRandomDate() {
   final DateTime minDate = NASAApi.minDate;
   final DateTime maxDate = NASAApi.maxDate;
   final Duration randomRange = maxDate.difference(minDate);
   final int dateDiff = Random().nextInt(randomRange.inDays);
-  return minDate.add(Duration(days: dateDiff)).toString().substring(0, 10);
+  return minDate.add(Duration(days: dateDiff));
+}
+
+String strDate(DateTime date) {
+  return date.toString().substring(0, 10);
 }
 
 // Future<String> getYoutubeVideoUrl(String url) async {

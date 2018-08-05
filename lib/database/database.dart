@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:apod_viewer/src/data_util.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -80,11 +81,11 @@ class FavoriteDatabase {
     return res;
   }
 
-  Future<Apod> getApod(String date) async {
+  Future<Apod> getApod(DateTime date) async {
     var dbClient = await db;
     Apod apod;
-    List<Map> favorite =
-        await dbClient.query("Favorite", where: "date = ?", whereArgs: [date]);
+    List<Map> favorite = await dbClient
+        .query("Favorite", where: "date = ?", whereArgs: [strDate(date)]);
     if (favorite.length > 0) {
       apod = Apod.fromDb(favorite[0]);
       // TODO: remove debug text
