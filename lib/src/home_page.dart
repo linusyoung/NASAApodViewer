@@ -248,8 +248,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            FloatingActionButton(
-              child: Icon(Icons.play_arrow),
+            FloatingActionButton.extended(
+              label: Text('Launch in Browser'),
+              icon: Icon(Icons.launch),
               onPressed: () async {
                 if (await canLaunch(apod.url)) {
                   launch(apod.url);
