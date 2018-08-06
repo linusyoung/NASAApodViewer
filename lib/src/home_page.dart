@@ -23,8 +23,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  DateTime _selectedDate = DateTime.now();
-  DateTime _picDate = DateTime.now().toLocal();
+  DateTime _picDate = DateTime.now();
   bool _isShakable;
   FavoriteDatabase db;
   Apod apod;
@@ -101,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   context: context,
                   firstDate: NASAApi.minDate,
                   lastDate: NASAApi.maxDate,
-                  initialDate: _selectedDate,
+                  initialDate: _picDate,
                 ).then((DateTime value) {
                   if (value != null) {
                     _picDate = value;
