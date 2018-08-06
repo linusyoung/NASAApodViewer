@@ -23,9 +23,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // DateTime _picDate = DateTime.now();
-  // TODO: remove before commit.
-  DateTime _picDate = DateTime(2018, 8, 5);
+  DateTime _picDate = DateTime.now();
   bool _isShakable;
   FavoriteDatabase db;
   Apod apod;
@@ -303,6 +301,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         );
+        // TODO: handle video content
         var pictureWidget = FadeInImage.memoryNetwork(
           placeholder: kTransparentImage,
           image: apod.url,
