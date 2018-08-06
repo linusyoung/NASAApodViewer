@@ -23,23 +23,24 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  DateTime _picDate = DateTime.now();
+  // DateTime _picDate = DateTime.now();
+  // TODO: remove before commit.
+  DateTime _picDate = DateTime(2018, 8, 5);
   bool _isShakable;
   FavoriteDatabase db;
   Apod apod;
   final _asyncLoaderState = GlobalKey<AsyncLoaderState>();
 
   List<Apod> favoriteList = List();
-  List<Apod> cacheFavoriteList = List();
 
   @override
   void initState() {
     super.initState();
     db = FavoriteDatabase();
     db.initDb();
-
-    favoriteList = [];
-    cacheFavoriteList = [];
+    () async {
+      await setupList();
+    };
     _isShakable = true;
     accelerometerEvents.listen((AccelerometerEvent event) async {
       if ((event.x.abs() >= 10 && event.y.abs() >= 10) && _isShakable) {
@@ -121,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: _asyncLoader,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.favorite),
-        onPressed: _displaySnackBar,
+        onPressed: _addFavorite,
       ),
     );
   }
@@ -261,7 +262,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _displaySnackBar() async {
+  void _addFavorite() async {
     apod.isFavorite = true;
     await db.addFavorite(apod);
     await setupList();
@@ -270,30 +271,18 @@ class _MyHomePageState extends State<MyHomePage> {
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIos: 1,
-      bgcolor: '#b7b4b3',
     );
   }
 
   Future setupList() async {
     favoriteList = await db.getFavoriteApodList();
-    print(cacheFavoriteList.length);
-    setState(() {
-      cacheFavoriteList = favoriteList;
-    });
   }
 
   // TODO: move favorite to a separate class
   void _showFavorite() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Favorite'),
-          ),
-          body: CoverFlow(
-            itemBuilder: favoriteBuilder,
-          ),
-        );
+        return _buildFavorite();
       }),
     );
   }
@@ -314,7 +303,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         );
-        var pictureWidget = _getMediaWdiget(apod.mediaType);
+        var pictureWidget = FadeInImage.memoryNetwork(
+          placeholder: kTransparentImage,
+          image: apod.url,
+          fit: BoxFit.fitWidth,
+          fadeInDuration: Duration(milliseconds: 400),
+        );
         return Container(
           child: Card(
               margin: EdgeInsets.only(
@@ -341,5 +335,26 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       return cards[index % cards.length];
     }
+  }
+
+  void _removeFavorite(int index) async {
+    var unfavoriteApod = favoriteList[index % favoriteList.length];
+    unfavoriteApod.isFavorite = false;
+    favoriteList.removeAt(index % favoriteList.length);
+    await db.addFavorite(unfavoriteApod);
+    _buildFavorite();
+  }
+
+  Widget _buildFavorite() {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Favorite'),
+      ),
+      body: CoverFlow(
+        itemBuilder: favoriteBuilder,
+        dismissibleItems: true,
+        dismissedCallback: (int index, _) => _removeFavorite(index),
+      ),
+    );
   }
 }

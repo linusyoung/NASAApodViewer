@@ -4,11 +4,11 @@
 // find child widgets in the widget tree, read text, and verify that the values of widget properties
 // are correct.
 
-import 'dart:convert' as json;
+// import 'dart:convert' as json;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
-import 'package:apod_viewer/src/NASAApi.dart';
-import 'package:apod_viewer/src/data_util.dart';
+// import 'package:http/http.dart' as http;
+// import 'package:apod_viewer/src/NASAApi.dart';
+// import 'package:apod_viewer/src/data_util.dart';
 
 void main() {
   // test('Get picture json from NASA', () async {
