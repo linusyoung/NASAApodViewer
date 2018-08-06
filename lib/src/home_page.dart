@@ -6,6 +6,7 @@ import 'package:sensors/sensors.dart';
 import 'package:simple_coverflow/simple_coverflow.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/model/apod_model.dart';
@@ -72,7 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
       renderLoad: () => Center(child: CircularProgressIndicator()),
       renderError: ([error]) {
         var errWidget;
-        print(NASAApi.maxDate.difference(_picDate).isNegative);
 
         if (NASAApi.maxDate.difference(_picDate).isNegative) {
           // TODO: format error msg
@@ -262,20 +262,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _displaySnackBar() async {
-    final snackBar = SnackBar(
-      content: Text('Favorite Added!'),
-      action: SnackBarAction(
-        label: 'Undo',
-        onPressed: () {
-          // TODO: add undo function
-        },
-      ),
-    );
     apod.isFavorite = true;
     await db.addFavorite(apod);
     await setupList();
-    print("list lenght: ${cacheFavoriteList.length}");
-    Scaffold.of(context).showSnackBar(snackBar);
+    Fluttertoast.showToast(
+      msg: "Favorite Added!",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIos: 1,
+      bgcolor: '#b7b4b3',
+    );
   }
 
   Future setupList() async {
