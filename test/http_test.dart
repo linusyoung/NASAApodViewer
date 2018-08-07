@@ -5,6 +5,8 @@
 // are correct.
 
 // import 'dart:convert' as json;
+import 'package:apod_viewer/src/NASAApi.dart';
+import 'package:apod_viewer/src/data_util.dart';
 import 'package:flutter_test/flutter_test.dart';
 // import 'package:http/http.dart' as http;
 // import 'package:apod_viewer/src/NASAApi.dart';
@@ -22,13 +24,16 @@ void main() {
   //     expect(apod.date, '2018-07-26');
   //   }
   // },skip: true);
-  test('get right date', () {
-    expect(DateTime.now().toLocal().toString().substring(0, 10), '2018-07-28');
-  }, skip: true);
 
-  test('url update', () async {
-    //   // expect(
-    //   //     getYoutubeVideoUrl('https://www.youtube.com/embed/8i8-IuYoz24?rel=0'),
-    //   //     'https://www.youtube.com/watch?v=8i8-IuYoz24');
+  test('String date', () {
+    final today = DateTime.now();
+    final expected = today.toString().substring(0, 10);
+    expect(strDate(today), expected);
+  });
+
+  test('Nasa API request url', () {
+    final today = strDate(DateTime.now());
+    expect(NASAApi(date: DateTime.now()).getUrl(),
+        "https://api.nasa.gov/planetary/apod?api_key=2bHuLGYETr9kzcrkqRWBqlJOP1c1AYfMXilVkeAl\&date=$today\&hd=true");
   });
 }
