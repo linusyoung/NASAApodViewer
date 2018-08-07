@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/model/apod_model.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_coverflow/simple_coverflow.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:simple_coverflow/simple_coverflow.dart';
 
 class Favorite extends StatefulWidget {
+  final FavoriteDatabase db;
+  Favorite({this.db});
   @override
   _FavoriteState createState() => _FavoriteState();
 }
@@ -14,34 +16,36 @@ class Favorite extends StatefulWidget {
 class _FavoriteState extends State<Favorite> {
   List<Apod> favoriteList = List();
   Apod apod;
-  FavoriteDatabase db;
 
   @override
   void initState() {
     super.initState();
-    db = FavoriteDatabase();
-    db.initDb();
-    () async {
-      setupList();
-    };
+    favoriteList = [];
   }
 
   @override
   Widget build(BuildContext context) {
-    print(favoriteList.length);
     return _buildFavorite();
   }
 
   Future setupList() async {
-    favoriteList = await db.getFavoriteApodList();
+    favoriteList = await widget.db.getFavoriteApodList();
   }
 
   void _removeFavorite(int index) async {
     var unfavoriteApod = favoriteList[index % favoriteList.length];
     unfavoriteApod.isFavorite = false;
     favoriteList.removeAt(index % favoriteList.length);
-    await db.addFavorite(unfavoriteApod);
+    await widget.db.addFavorite(unfavoriteApod);
     _buildFavorite();
+  }
+
+  Widget _buildCoverFlow() {
+    return CoverFlow(
+      itemBuilder: favoriteBuilder,
+      dismissibleItems: true,
+      dismissedCallback: (int index, _) => _removeFavorite(index),
+    );
   }
 
   Widget _buildFavorite() {
@@ -49,10 +53,9 @@ class _FavoriteState extends State<Favorite> {
       appBar: AppBar(
         title: Text('Favorite'),
       ),
-      body: CoverFlow(
-        itemBuilder: favoriteBuilder,
-        dismissibleItems: true,
-        dismissedCallback: (int index, _) => _removeFavorite(index),
+      body: FutureBuilder(
+        future: setupList(),
+        builder: (_, snapshot) => _buildCoverFlow(),
       ),
     );
   }

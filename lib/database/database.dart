@@ -77,7 +77,7 @@ class FavoriteDatabase {
     int res = await dbClient.update("Favorite", apod.toMap(),
         where: "date = ?", whereArgs: [apod.date]);
     // TODO: remove debug text
-    // print('Favorite was updated $res for ${apod.date} with ${apod.isFavorite}');
+    print('Favorite was updated $res for ${apod.date} with ${apod.isFavorite}');
     return res;
   }
 
@@ -88,8 +88,6 @@ class FavoriteDatabase {
         .query("Favorite", where: "date = ?", whereArgs: [strDate(date)]);
     if (favorite.length > 0) {
       apod = Apod.fromDb(favorite[0]);
-      // TODO: remove debug text
-      // print('Date $date, Favorite ${apod.isFavorite}');
     }
     return apod;
   }

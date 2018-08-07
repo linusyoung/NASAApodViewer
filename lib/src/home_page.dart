@@ -54,7 +54,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    db.closeDb();
     super.dispose();
   }
 
@@ -260,7 +259,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _showFavorite() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) {
-        return Favorite();
+        return Favorite(db: db);
       }),
     );
   }
