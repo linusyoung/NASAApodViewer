@@ -214,6 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getMediaWdiget(String mediaType) {
+    print(apod.url);
     switch (mediaType) {
       case "image":
         return GestureDetector(

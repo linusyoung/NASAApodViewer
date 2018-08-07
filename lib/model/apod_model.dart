@@ -1,3 +1,5 @@
+import 'package:apod_viewer/src/data_util.dart';
+
 class Apod {
   final String copyright;
   final String date;
@@ -27,11 +29,11 @@ class Apod {
         date: json['date'],
         copyright: json['copyright'] == null ? '' : json['copyright'],
         explanation: json['explanation'],
-        hdurl: json['hdurl'],
+        hdurl: normalizeUrl(json['hdurl']),
         mediaType: json['media_type'],
         serviceVersion: json['service_version'],
         title: json['title'],
-        url: json['url'],
+        url: normalizeUrl(json['url']),
         isFavorite: false);
   }
 

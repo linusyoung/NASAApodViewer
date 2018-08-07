@@ -36,4 +36,9 @@ void main() {
     expect(NASAApi(date: DateTime.now()).getUrl(),
         "https://api.nasa.gov/planetary/apod?api_key=2bHuLGYETr9kzcrkqRWBqlJOP1c1AYfMXilVkeAl\&date=$today\&hd=true");
   });
+
+  test('Url normalize', () {
+    final testUrl = "https://apod.nasa.gov/apod/image/sdfadf";
+    expect(normalizeUrl(testUrl), "https://apod.nasa.gov/apod/image/sdfadf");
+  });
 }

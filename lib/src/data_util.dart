@@ -38,17 +38,13 @@ String strDate(DateTime date) {
   return date.toString().substring(0, 10);
 }
 
-// Future<String> getYoutubeVideoUrl(String url) async {
-//   const ytApiUrl = 'http://you-link.herokuapp.com/?url=';
-//   // TODO: using regex to handle url in Nasa Api
-//   var reqUrl = url.replaceAll("embed/", "watch?v=");
-//   reqUrl = reqUrl.replaceAll("?rel=0", "");
-//   final res = await http.get(ytApiUrl + reqUrl);
-//   if (res.statusCode == 200) {
-//     final parsed = json.jsonDecode(res.body);
-//     // TODO: only return first url at the moment.
-//     return parsed[0]['url'];
-//   } else {
-//     throw Exception('video link is not found.');
-//   }
-// }
+String normalizeUrl(String url) {
+  var regex = RegExp(r"http");
+  if (regex.hasMatch(url)) {
+    var match = regex.allMatches(url).toList();
+    if (match.length > 1) {
+      url = url.replaceAll(NASAApi.urlPrefix, "");
+    }
+  }
+  return url;
+}
