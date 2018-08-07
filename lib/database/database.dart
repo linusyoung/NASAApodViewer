@@ -99,7 +99,7 @@ class FavoriteDatabase {
     List<Map> res = await dbClient
         .query("Favorite", where: "is_favorite = ?", whereArgs: [1]);
     // TODO: remove debug text
-    // print('true lenght: ${res.map((a) => Apodpic.fromDb(a)).toList().length}');
+    print('true lenght: ${res.map((a) => Apod.fromDb(a)).toList().length}');
     return res.map((a) => Apod.fromDb(a)).toList();
   }
 

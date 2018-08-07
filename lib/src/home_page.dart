@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:apod_viewer/src/favorite_page.dart';
 import 'package:async_loader/async_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:sensors/sensors.dart';
-import 'package:simple_coverflow/simple_coverflow.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -36,9 +36,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     db = FavoriteDatabase();
     db.initDb();
-    () async {
-      await setupList();
-    };
     _isShakable = true;
     accelerometerEvents.listen((AccelerometerEvent event) async {
       if ((event.x.abs() >= 10 && event.y.abs() >= 10) && _isShakable) {
@@ -260,100 +257,22 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void _showFavorite() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) {
+        return Favorite();
+      }),
+    );
+  }
+
   void _addFavorite() async {
     apod.isFavorite = true;
     await db.addFavorite(apod);
-    await setupList();
     Fluttertoast.showToast(
       msg: "Favorite Added!",
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIos: 1,
-    );
-  }
-
-  Future setupList() async {
-    favoriteList = await db.getFavoriteApodList();
-  }
-
-  // TODO: move favorite to a separate class
-  void _showFavorite() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) {
-        return _buildFavorite();
-      }),
-    );
-  }
-
-  Widget favoriteBuilder(BuildContext context, int index) {
-    final cards = favoriteList.map(
-      (apod) {
-        var titleWidget = Text(apod.title);
-        var dateWidget = Text(apod.date);
-        var explanationWidget = Expanded(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                apod.explanation,
-                textAlign: TextAlign.justify,
-              ),
-            ),
-          ),
-        );
-        // TODO: handle video content
-        var pictureWidget = FadeInImage.memoryNetwork(
-          placeholder: kTransparentImage,
-          image: apod.url,
-          fit: BoxFit.fitWidth,
-          fadeInDuration: Duration(milliseconds: 400),
-        );
-        return Container(
-          child: Card(
-              margin: EdgeInsets.only(
-                top: 8.0,
-                bottom: 8.0,
-              ),
-              child: Column(
-                children: <Widget>[
-                  dateWidget,
-                  titleWidget,
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: pictureWidget,
-                  ),
-                  explanationWidget,
-                ],
-              )),
-        );
-      },
-    ).toList();
-
-    if (cards.length == 0) {
-      return new Container();
-    } else {
-      return cards[index % cards.length];
-    }
-  }
-
-  void _removeFavorite(int index) async {
-    var unfavoriteApod = favoriteList[index % favoriteList.length];
-    unfavoriteApod.isFavorite = false;
-    favoriteList.removeAt(index % favoriteList.length);
-    await db.addFavorite(unfavoriteApod);
-    _buildFavorite();
-  }
-
-  Widget _buildFavorite() {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Favorite'),
-      ),
-      body: CoverFlow(
-        itemBuilder: favoriteBuilder,
-        dismissibleItems: true,
-        dismissedCallback: (int index, _) => _removeFavorite(index),
-      ),
     );
   }
 }
