@@ -7,8 +7,6 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:simple_coverflow/simple_coverflow.dart';
 
 class Favorite extends StatefulWidget {
-  final FavoriteDatabase db;
-  Favorite({this.db});
   @override
   _FavoriteState createState() => _FavoriteState();
 }
@@ -16,6 +14,7 @@ class Favorite extends StatefulWidget {
 class _FavoriteState extends State<Favorite> {
   List<Apod> favoriteList = List();
   Apod apod;
+  FavoriteDatabase db = FavoriteDatabase();
 
   @override
   void initState() {
@@ -29,14 +28,14 @@ class _FavoriteState extends State<Favorite> {
   }
 
   Future setupList() async {
-    favoriteList = await widget.db.getFavoriteApodList();
+    favoriteList = await db.getFavoriteApodList();
   }
 
   void _removeFavorite(int index) async {
     var unfavoriteApod = favoriteList[index % favoriteList.length];
     unfavoriteApod.isFavorite = false;
     favoriteList.removeAt(index % favoriteList.length);
-    await widget.db.addFavorite(unfavoriteApod);
+    await db.addFavorite(unfavoriteApod);
     _buildFavorite();
   }
 

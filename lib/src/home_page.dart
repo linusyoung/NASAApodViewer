@@ -259,7 +259,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _showFavorite() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) {
-        return Favorite(db: db);
+        return Favorite();
       }),
     );
   }
