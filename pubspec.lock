@@ -14,7 +14,7 @@ packages:
       name: archive
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "2.0.2"
   args:
     dependency: transitive
     description:
@@ -493,5 +493,5 @@ packages:
     source: hosted
     version: "2.1.15"
 sdks:
-  dart: ">=2.0.0-dev.69.0 <=2.0.0-dev.69.5.flutter-8bad5c7b29"
+  dart: ">=2.0.0-dev.69.0 <=2.0.0-dev.69.5.flutter-b04def964c"
   flutter: ">=0.1.4 <2.0.0"
