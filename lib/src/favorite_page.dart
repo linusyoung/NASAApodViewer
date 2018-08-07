@@ -14,7 +14,7 @@ class Favorite extends StatefulWidget {
 class _FavoriteState extends State<Favorite> {
   List<Apod> favoriteList = List();
   Apod apod;
-  FavoriteDatabase db = FavoriteDatabase();
+  ApodDatabase db = ApodDatabase();
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _FavoriteState extends State<Favorite> {
     var unfavoriteApod = favoriteList[index % favoriteList.length];
     unfavoriteApod.isFavorite = false;
     favoriteList.removeAt(index % favoriteList.length);
-    await db.addFavorite(unfavoriteApod);
+    await db.updateApod(unfavoriteApod);
     _buildFavorite();
   }
 

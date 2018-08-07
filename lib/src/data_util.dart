@@ -8,7 +8,7 @@ import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/model/apod_model.dart';
 import 'package:apod_viewer/src/NASAApi.dart';
 
-Future<Apod> getApodData(DateTime date, FavoriteDatabase db) async {
+Future<Apod> getApodData(DateTime date, ApodDatabase db) async {
   var apod = await db.getApod(date);
   if (apod == null) {
     final apiCall = NASAApi(date: date);

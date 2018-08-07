@@ -8,10 +8,10 @@ import 'package:sqflite/sqflite.dart';
 
 import 'package:apod_viewer/model/apod_model.dart';
 
-class FavoriteDatabase {
-  static final FavoriteDatabase _instance = FavoriteDatabase._internal();
+class ApodDatabase {
+  static final ApodDatabase _instance = ApodDatabase._internal();
 
-  factory FavoriteDatabase() => _instance;
+  factory ApodDatabase() => _instance;
 
   static Database _db;
 
@@ -24,7 +24,7 @@ class FavoriteDatabase {
     }
   }
 
-  FavoriteDatabase._internal();
+  ApodDatabase._internal();
 
   initDb() async {
     Directory documentDirectory = await getApplicationDocumentsDirectory();
@@ -44,11 +44,9 @@ class FavoriteDatabase {
         media_type TEXT,
         service_version TEXT,
         is_favorite BIT)''');
-    // TODO: remove debug text
-    // print('Database Was Created');
   }
 
-  Future<int> addFavorite(Apod apod) async {
+  Future<int> updateApod(Apod apod) async {
     var dbClient = await db;
     int res;
     List<Map> exist = await dbClient
@@ -63,14 +61,14 @@ class FavoriteDatabase {
     return res;
   }
 
-  Future<int> deleteFavorite(String date) async {
-    var dbClient = await db;
-    int res =
-        await dbClient.delete("Favorite", where: "date = ?", whereArgs: [date]);
-    // TODO: remove debug text
-    // print('Favorite was deleted $res');
-    return res;
-  }
+  // Future<int> deleteFavorite(String date) async {
+  //   var dbClient = await db;
+  //   int res =
+  //       await dbClient.delete("Favorite", where: "date = ?", whereArgs: [date]);
+  //   // TODO: remove debug text
+  //   // print('Favorite was deleted $res');
+  //   return res;
+  // }
 
   Future<int> updateFavorite(Apod apod) async {
     var dbClient = await db;
@@ -97,7 +95,15 @@ class FavoriteDatabase {
     List<Map> res = await dbClient
         .query("Favorite", where: "is_favorite = ?", whereArgs: [1]);
     // TODO: remove debug text
-    print('true lenght: ${res.map((a) => Apod.fromDb(a)).toList().length}');
+    print('favorite lenght: ${res.map((a) => Apod.fromDb(a)).toList().length}');
+    return res.map((a) => Apod.fromDb(a)).toList();
+  }
+
+  Future<List<Apod>> getApodList() async {
+    var dbClient = await db;
+    List<Map> res = await dbClient.query("Favorite");
+    // TODO: remove debug text
+    print('apod lenght: ${res.map((a) => Apod.fromDb(a)).toList().length}');
     return res.map((a) => Apod.fromDb(a)).toList();
   }
 

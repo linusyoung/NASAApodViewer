@@ -25,7 +25,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   DateTime _picDate = DateTime.now();
   bool _isShakable;
-  FavoriteDatabase db;
+  ApodDatabase db;
   Apod apod;
   final _asyncLoaderState = GlobalKey<AsyncLoaderState>();
 
@@ -34,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    db = FavoriteDatabase();
+    db = ApodDatabase();
     db.initDb();
     _isShakable = true;
     accelerometerEvents.listen((AccelerometerEvent event) async {
@@ -266,7 +266,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _addFavorite() async {
     apod.isFavorite = true;
-    await db.addFavorite(apod);
+    await db.updateApod(apod);
     Fluttertoast.showToast(
       msg: "Favorite Added!",
       toastLength: Toast.LENGTH_SHORT,
