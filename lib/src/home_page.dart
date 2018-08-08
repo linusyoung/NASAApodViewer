@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:apod_viewer/src/favorite_page.dart';
+import 'package:apod_viewer/src/history_page.dart';
 import 'package:async_loader/async_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:sensors/sensors.dart';
@@ -64,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
       key: _asyncLoaderState,
       initState: () async {
         apod = await getApodData(_picDate, db);
+        await db.updateApod(apod);
       },
       renderLoad: () => Center(child: CircularProgressIndicator()),
       renderError: ([error]) {
@@ -266,12 +268,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _showHistory() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text("History"),
-          ),
-          body: Container(),
-        );
+        return History();
       }),
     );
   }

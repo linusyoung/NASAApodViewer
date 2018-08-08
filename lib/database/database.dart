@@ -54,9 +54,10 @@ class ApodDatabase {
     if (exist.length == 0) {
       res = await dbClient.insert("Favorite", apod.toMap());
       // TODO: remove debug text
-      // print('Favorite added $res');
+      print('Apod added $res');
     } else {
       res = await updateFavorite(apod);
+      print('Apod updated');
     }
     return res;
   }
