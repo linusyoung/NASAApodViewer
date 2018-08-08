@@ -39,11 +39,12 @@ class _HistoryState extends State<History> {
     _buildFavorite();
   }
 
-  Widget _buildCoverFlow() {
-    return CoverFlow(
-      itemBuilder: favoriteBuilder,
-      dismissibleItems: true,
-      dismissedCallback: (int index, _) => _removeFavorite(index),
+  Widget _buildHistoryListTile() {
+    return ListView(
+      children: tileBuilder(),
+      // itemBuilder: favoriteBuilder,
+      // dismissibleItems: true,
+      // dismissedCallback: (int index, _) => _removeFavorite(index),
     );
   }
 
@@ -54,13 +55,13 @@ class _HistoryState extends State<History> {
       ),
       body: FutureBuilder(
         future: setupList(),
-        builder: (_, snapshot) => _buildCoverFlow(),
+        builder: (_, snapshot) => _buildHistoryListTile(),
       ),
     );
   }
 
-  Widget favoriteBuilder(BuildContext context, int index) {
-    final cards = historyList.map(
+  List<Widget> tileBuilder() {
+    final tiles = historyList.map(
       (apod) {
         var titleWidget = Text(apod.title);
         var dateWidget = Text(apod.date);
@@ -76,37 +77,30 @@ class _HistoryState extends State<History> {
           ),
         );
         // TODO: handle video content
-        var pictureWidget = FadeInImage.memoryNetwork(
-          placeholder: kTransparentImage,
-          image: apod.url,
-          fit: BoxFit.fitWidth,
-          fadeInDuration: Duration(milliseconds: 400),
+        var pictureWidget = Container(
+          width: 80.0,
+          height: 60.0,
+          child: FadeInImage.memoryNetwork(
+            placeholder: kTransparentImage,
+            image: apod.url,
+            fit: BoxFit.fill,
+            fadeInDuration: Duration(milliseconds: 400),
+          ),
         );
-        return Container(
-          child: Card(
-              margin: EdgeInsets.only(
-                top: 8.0,
-                bottom: 8.0,
-              ),
-              child: Column(
-                children: <Widget>[
-                  dateWidget,
-                  titleWidget,
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: pictureWidget,
-                  ),
-                  explanationWidget,
-                ],
-              )),
+        return ListTile(
+          title: titleWidget,
+          leading: pictureWidget,
+          trailing: Icon(Icons.favorite_border),
+          subtitle: dateWidget,
+          onTap: () {},
         );
       },
+    );
+    final divided = ListTile.divideTiles(
+      context: context,
+      tiles: tiles,
     ).toList();
 
-    if (cards.length == 0) {
-      return new Container();
-    } else {
-      return cards[index % cards.length];
-    }
+    return divided;
   }
 }

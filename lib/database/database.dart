@@ -102,7 +102,7 @@ class ApodDatabase {
 
   Future<List<Apod>> getApodList() async {
     var dbClient = await db;
-    List<Map> res = await dbClient.query("Favorite");
+    List<Map> res = await dbClient.query("Favorite", orderBy: "date");
     // TODO: remove debug text
     print('apod lenght: ${res.map((a) => Apod.fromDb(a)).toList().length}');
     return res.map((a) => Apod.fromDb(a)).toList();
