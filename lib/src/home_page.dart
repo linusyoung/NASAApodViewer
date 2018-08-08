@@ -97,8 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               }),
           IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () {},
+            icon: Icon(Icons.history),
+            onPressed: _showHistory,
           ),
         ],
         leading: IconButton(
@@ -212,7 +212,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _getMediaWdiget(String mediaType) {
-    print(apod.url);
     switch (mediaType) {
       case "image":
         return GestureDetector(
@@ -260,6 +259,19 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) {
         return Favorite();
+      }),
+    );
+  }
+
+  void _showHistory() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("History"),
+          ),
+          body: Container(),
+        );
       }),
     );
   }
