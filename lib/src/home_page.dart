@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:apod_viewer/model/app_actions.dart';
 import 'package:apod_viewer/src/favorite_page.dart';
 import 'package:apod_viewer/src/history_page.dart';
 import 'package:async_loader/async_loader.dart';
@@ -83,7 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         actions: <Widget>[
           IconButton(
-              icon: Icon(Icons.date_range),
+              icon: Icon(
+                actions[0].icon,
+                semanticLabel: actions[0].semanticLabel,
+              ),
               onPressed: () {
                 showDatePicker(
                   context: context,
@@ -98,13 +102,39 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               }),
           IconButton(
-            icon: Icon(Icons.history),
-            onPressed: _showHistory,
-          ),
-          IconButton(
-            icon: Icon(Icons.list),
+            icon: Icon(
+              actions[1].icon,
+              semanticLabel: actions[1].semanticLabel,
+            ),
             onPressed: _showFavorite,
           ),
+          IconButton(
+            icon: Icon(
+              actions[2].icon,
+              semanticLabel: actions[2].semanticLabel,
+            ),
+            onPressed: _showHistory,
+          ),
+          // PopupMenuButton<Actions>(
+          //   onSelected: _select,
+          //   itemBuilder: (BuildContext context) {
+          //     return actions.skip(2).map((Actions action) {
+          //       return PopupMenuItem<Actions>(
+          //         value: action,
+          //         child: Row(
+          //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //           children: <Widget>[
+          //             Text(action.semanticLabel),
+          //             Icon(
+          //               action.icon,
+          //               semanticLabel: action.semanticLabel,
+          //             )
+          //           ],
+          //         ),
+          //       );
+          //     }).toList();
+          //   },
+          // ),
         ],
       ),
       body: _asyncLoader,
@@ -284,4 +314,17 @@ class _MyHomePageState extends State<MyHomePage> {
       timeInSecForIos: 1,
     );
   }
+
+  void _select(Actions action) {
+    // Causes the app to rebuild with the new _selectedChoice.
+    if (action.semanticLabel == "History") {
+      _showHistory();
+    }
+  }
 }
+
+const actions = const <Actions>[
+  const Actions(icon: Icons.date_range, semanticLabel: "select date"),
+  const Actions(icon: Icons.list, semanticLabel: "favorite list"),
+  const Actions(icon: Icons.history, semanticLabel: "History"),
+];
