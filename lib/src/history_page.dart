@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/model/apod_model.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_coverflow/simple_coverflow.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class History extends StatefulWidget {
@@ -65,17 +64,17 @@ class _HistoryState extends State<History> {
       (apod) {
         var titleWidget = Text(apod.title);
         var dateWidget = Text(apod.date);
-        var explanationWidget = Expanded(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                apod.explanation,
-                textAlign: TextAlign.justify,
-              ),
-            ),
-          ),
-        );
+        // var explanationWidget = Expanded(
+        //   child: SingleChildScrollView(
+        //     child: Padding(
+        //       padding: const EdgeInsets.all(8.0),
+        //       child: Text(
+        //         apod.explanation,
+        //         textAlign: TextAlign.justify,
+        //       ),
+        //     ),
+        //   ),
+        // );
         // TODO: handle video content
         var pictureWidget = Container(
           width: 80.0,
@@ -90,7 +89,12 @@ class _HistoryState extends State<History> {
         return ListTile(
           title: titleWidget,
           leading: pictureWidget,
-          trailing: Icon(Icons.favorite_border),
+          trailing: apod.isFavorite
+              ? Icon(
+                  Icons.favorite,
+                  color: Theme.of(context).primaryColorDark,
+                )
+              : Icon(Icons.favorite_border),
           subtitle: dateWidget,
           onTap: () {},
         );

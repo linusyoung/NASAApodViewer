@@ -81,7 +81,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        titleSpacing: 1.0,
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.date_range),
@@ -102,11 +101,11 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.history),
             onPressed: _showHistory,
           ),
+          IconButton(
+            icon: Icon(Icons.list),
+            onPressed: _showFavorite,
+          ),
         ],
-        leading: IconButton(
-          icon: Icon(Icons.list),
-          onPressed: _showFavorite,
-        ),
       ),
       body: _asyncLoader,
       floatingActionButton: FloatingActionButton(
@@ -258,6 +257,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _showFavorite() {
+    _isShakable = false;
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) {
         return Favorite();
@@ -266,6 +266,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _showHistory() {
+    _isShakable = false;
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) {
         return History();
