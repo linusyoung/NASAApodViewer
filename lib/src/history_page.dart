@@ -23,80 +23,78 @@ class _HistoryState extends State<History> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildFavorite();
+    return _buildHistory();
   }
 
   Future setupList() async {
     historyList = await db.getApodList();
   }
 
-  Widget _buildHistoryListTile() {
-    return ListView(
-      children: tileBuilder(),
-      // itemBuilder: favoriteBuilder,
-      // dismissibleItems: true,
-      // dismissedCallback: (int index, _) => _removeFavorite(index),
+  Widget _buildHistory() {
+    var futureBuilder = FutureBuilder(
+      future: db.getApodList(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+            return CircularProgressIndicator();
+          default:
+            if (snapshot.hasError)
+              return Text('Error: ${snapshot.error}');
+            else
+              return buildListView(context, snapshot);
+        }
+      },
     );
-  }
 
-  Widget _buildFavorite() {
     return Scaffold(
       appBar: AppBar(
         title: Text('History'),
       ),
-      body: FutureBuilder(
-        future: setupList(),
-        builder: (_, snapshot) => _buildHistoryListTile(),
-      ),
+      body: futureBuilder,
     );
   }
 
-  List<Widget> tileBuilder() {
-    final tiles = historyList.map(
-      (apod) {
-        var titleWidget = Text(apod.title);
-        var dateWidget = Text(apod.date);
-        // var explanationWidget = Expanded(
-        //   child: SingleChildScrollView(
-        //     child: Padding(
-        //       padding: const EdgeInsets.all(8.0),
-        //       child: Text(
-        //         apod.explanation,
-        //         textAlign: TextAlign.justify,
-        //       ),
-        //     ),
-        //   ),
-        // );
-        // TODO: handle video content
-        var pictureWidget = Container(
-          width: 80.0,
-          height: 60.0,
-          child: FadeInImage.memoryNetwork(
-            placeholder: kTransparentImage,
-            image: apod.url,
-            fit: BoxFit.fill,
-            fadeInDuration: Duration(milliseconds: 400),
-          ),
-        );
-        return ListTile(
-          title: titleWidget,
-          leading: pictureWidget,
-          trailing: apod.isFavorite
-              ? Icon(
-                  Icons.favorite,
-                  color: Theme.of(context).primaryColorDark,
-                )
-              : Icon(Icons.favorite_border),
-          subtitle: dateWidget,
-          onTap: () {},
-        );
+  Widget _buildRow(Apod apod) {
+    var titleWidget = Text(apod.title);
+    var dateWidget = Text(apod.date);
+    // TODO: handle video content
+    var pictureWidget = Container(
+      width: 80.0,
+      height: 60.0,
+      child: FadeInImage.memoryNetwork(
+        placeholder: kTransparentImage,
+        image: apod.url,
+        fit: BoxFit.fill,
+        fadeInDuration: Duration(milliseconds: 400),
+      ),
+    );
+
+    return ListTile(
+      title: titleWidget,
+      leading: pictureWidget,
+      trailing: apod.isFavorite
+          ? Icon(
+              Icons.favorite,
+              color: Theme.of(context).primaryColorDark,
+            )
+          : Icon(Icons.favorite_border),
+      subtitle: dateWidget,
+      onTap: () async {
+        await db.updateFavorite(apod);
+        setState(() {});
       },
     );
-    final divided = ListTile.divideTiles(
-      context: context,
-      tiles: tiles,
-    ).toList();
+  }
 
-    return divided;
+  Widget buildListView(BuildContext context, AsyncSnapshot snapshot) {
+    List<Apod> apods = snapshot.data;
+    return ListView.builder(
+        itemCount: apods.length * 2,
+        itemBuilder: (context, i) {
+          if (i.isOdd) return Divider();
+          final index = i ~/ 2;
+          return _buildRow(apods[index]);
+        });
   }
 }

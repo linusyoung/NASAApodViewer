@@ -315,12 +315,12 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _select(Actions action) {
-    // Causes the app to rebuild with the new _selectedChoice.
-    if (action.semanticLabel == "History") {
-      _showHistory();
-    }
-  }
+  // void _select(Actions action) {
+  //   // Causes the app to rebuild with the new _selectedChoice.
+  //   if (action.semanticLabel == "History") {
+  //     _showHistory();
+  //   }
+  // }
 }
 
 const actions = const <Actions>[
