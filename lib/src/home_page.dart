@@ -36,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     db = ApodDatabase();
     db.initDb();
-    _picDate = DateTime.now();
+    _picDate = NASAApi.maxDate;
     _isShakable = true;
     accelerometerEvents.listen((AccelerometerEvent event) async {
       if ((event.x.abs() >= 10 && event.y.abs() >= 10) && _isShakable) {
@@ -67,19 +67,8 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       renderLoad: () => Center(child: CircularProgressIndicator()),
       renderError: ([error]) {
-        return Text(_picDate.toString());
-        // var errWidget;
-
-        // if (NASAApi.maxDate.difference(_picDate).isNegative) {
-        //   // TODO: format error msg
-        //   errWidget = Text(
-        //       'Sorry, there was an error when loading APOD data. Please try other date.');
-        // } else {
-        //   errWidget = Center(
-        //     child: Text('Tomorrow is not coming yet. Please be patient!'),
-        //   );
-        // }
-        // return errWidget;
+        return Text(
+            'Sorry, there was an error when loading APOD data. Please try other date.');
       },
       renderSuccess: ({data}) {
         return _getApodContent();
