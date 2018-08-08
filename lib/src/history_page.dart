@@ -30,14 +30,6 @@ class _HistoryState extends State<History> {
     historyList = await db.getApodList();
   }
 
-  void _removeFavorite(int index) async {
-    var unfavoriteApod = historyList[index % historyList.length];
-    unfavoriteApod.isFavorite = false;
-    historyList.removeAt(index % historyList.length);
-    await db.updateApod(unfavoriteApod);
-    _buildFavorite();
-  }
-
   Widget _buildHistoryListTile() {
     return ListView(
       children: tileBuilder(),
