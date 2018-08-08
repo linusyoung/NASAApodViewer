@@ -13,8 +13,8 @@ Future<Apod> getApodData(DateTime date, ApodDatabase db) async {
   if (apod == null) {
     final apiCall = NASAApi(date: date);
     final requestUrl = apiCall.getUrl();
+    print(requestUrl);
     final res = await http.get(requestUrl);
-
     if (res.statusCode == 200) {
       final parsed = json.jsonDecode(res.body);
       return Apod.fromJson(parsed);

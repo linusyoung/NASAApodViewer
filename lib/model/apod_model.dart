@@ -29,7 +29,7 @@ class Apod {
         date: json['date'],
         copyright: json['copyright'] == null ? '' : json['copyright'],
         explanation: json['explanation'],
-        hdurl: normalizeUrl(json['hdurl']),
+        hdurl: json['hdurl'] == null ? '' : normalizeUrl(json['hdurl']),
         mediaType: json['media_type'],
         serviceVersion: json['service_version'],
         title: json['title'],

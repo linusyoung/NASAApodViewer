@@ -12,6 +12,6 @@ class NASAApi {
 
   String getUrl() {
     var dateStr = strDate(date);
-    return "${baseUrl}api_key=$apiKey\&date=$dateStr\&hd=true";
+    return "${baseUrl}api_key=$apiKey\&date=$dateStr";
   }
 }
