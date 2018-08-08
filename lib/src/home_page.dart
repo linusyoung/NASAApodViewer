@@ -67,8 +67,10 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       renderLoad: () => Center(child: CircularProgressIndicator()),
       renderError: ([error]) {
-        return Text(
-            'Sorry, there was an error when loading APOD data. Please try other date.');
+        return Center(
+          child: Text(
+              'Sorry, there was an error when loading APOD data. Please try other date.'),
+        );
       },
       renderSuccess: ({data}) {
         return _getApodContent();
