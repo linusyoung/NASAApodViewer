@@ -2,7 +2,7 @@ import 'package:apod_viewer/src/data_util.dart';
 
 class NASAApi {
   static const String apiKey = "2bHuLGYETr9kzcrkqRWBqlJOP1c1AYfMXilVkeAl";
-  static const String baseUrl = "https://api.nasa.gov/planetary/apod?";
+  static const String baseUrl = "https://api.nasa.gov/planetary/apod";
   static DateTime minDate = DateTime(1995, 6, 16);
   // Nasa Apod server on UTC-5
   static DateTime maxDate = DateTime.now().toUtc().subtract(Duration(hours: 5));
@@ -13,6 +13,6 @@ class NASAApi {
 
   String getUrl() {
     var dateStr = strDate(date);
-    return "${baseUrl}api_key=$apiKey\&date=$dateStr";
+    return "$baseUrl?api_key=$apiKey\&date=$dateStr";
   }
 }
