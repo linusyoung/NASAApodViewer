@@ -108,6 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: _asyncLoader,
       floatingActionButton: FloatingActionButton(
+        heroTag: UniqueKey(),
         child: Icon(Icons.favorite),
         onPressed: _addFavorite,
       ),
@@ -241,6 +242,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             FloatingActionButton.extended(
+              heroTag: UniqueKey(),
               label: Text('Launch in Browser'),
               icon: Icon(Icons.launch),
               onPressed: () async {
