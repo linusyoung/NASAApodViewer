@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   context: context,
                   firstDate: NASAApi.minDate,
                   lastDate: NASAApi.maxDate,
-                  initialDate: _picDate,
+                  initialDate: _isFuture() ? NASAApi.maxDate : _picDate,
                 ).then((DateTime value) {
                   if (value != null) {
                     _picDate = value;
@@ -140,18 +140,18 @@ class _MyHomePageState extends State<MyHomePage> {
         var _dayDiff = 0;
         _dayDiff += direction == DismissDirection.endToStart ? 1 : -1;
         _picDate = _picDate.add(Duration(days: _dayDiff));
-        if (NASAApi.maxDate.difference(_picDate).isNegative) {
+        if (_isFuture()) {
           setState(() {});
         } else {
           _asyncLoaderState.currentState.reloadState();
         }
       },
-      child: NASAApi.maxDate.difference(_picDate).isNegative
+      child: _isFuture()
           ? Center(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  'Tomorrow is not coming!\nSwipe back or select a date from Calendar.',
+                  '${strDate(_picDate)} isn\'t available!\nSwipe right or select a date from Calendar.',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 30.0,
@@ -202,6 +202,10 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
     );
+  }
+
+  bool _isFuture() {
+    return NASAApi.maxDate.difference(_picDate).isNegative;
   }
 
   Widget _getMediaWdiget(String mediaType) {
