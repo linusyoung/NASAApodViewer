@@ -62,7 +62,7 @@ class ApodDatabase {
     return res;
   }
 
-  // Future<int> deleteFavorite(String date) async {
+  // Future<int> deleteApod(String date) async {
   //   var dbClient = await db;
   //   int res =
   //       await dbClient.delete("Favorite", where: "date = ?", whereArgs: [date]);
