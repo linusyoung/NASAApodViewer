@@ -59,11 +59,9 @@ class _HistoryState extends State<History> {
   Widget buildListView(BuildContext context, AsyncSnapshot snapshot) {
     List<Apod> apods = snapshot.data;
     return ListView.builder(
-        itemCount: apods.length * 2,
+        itemCount: apods.length,
         itemBuilder: (context, i) {
-          if (i.isOdd) return Divider();
-          final index = i ~/ 2;
-          return ApodHistoryView(apod: apods[index]);
+          return ApodHistoryView(apod: apods[i]);
         });
   }
 }

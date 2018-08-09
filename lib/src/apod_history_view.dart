@@ -34,22 +34,48 @@ class _ApodHistoryViewState extends State<ApodHistoryView> {
   Widget build(BuildContext context) {
     var titleWidget = Text(apodState.title);
     var dateWidget = Text(apodState.date);
-    // TODO: handle video content
-    var pictureWidget = Container(
-      width: 80.0,
-      height: 60.0,
-      child: FadeInImage.memoryNetwork(
-        placeholder: kTransparentImage,
-        image: apodState.url,
-        fit: BoxFit.fill,
-        fadeInDuration: Duration(milliseconds: 400),
+    var explanationWidget = Container(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            apodState.explanation,
+            textAlign: TextAlign.justify,
+          ),
+        ),
       ),
     );
 
-    return ListTile(
-      title: titleWidget,
-      leading: pictureWidget,
-      trailing: IconButton(
+    // TODO: handle video content
+    var pictureWidget = Container(
+      child: FadeInImage.memoryNetwork(
+        placeholder: kTransparentImage,
+        image: apodState.url,
+        // fit: BoxFit.contain,
+        fadeInDuration: Duration(milliseconds: 400),
+      ),
+    );
+    return ExpansionTile(
+      initiallyExpanded: false,
+      title: Container(
+        height: 80.0,
+        child: Column(
+          children: <Widget>[
+            Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                child: dateWidget,
+              ),
+            ),
+            Expanded(
+              child: titleWidget,
+            ),
+          ],
+        ),
+      ),
+      leading: IconButton(
         icon: apodState.isFavorite
             ? Icon(
                 Icons.favorite,
@@ -58,7 +84,7 @@ class _ApodHistoryViewState extends State<ApodHistoryView> {
             : Icon(Icons.favorite_border),
         onPressed: _onPressed,
       ),
-      subtitle: dateWidget,
+      children: <Widget>[pictureWidget, explanationWidget],
     );
   }
 }
