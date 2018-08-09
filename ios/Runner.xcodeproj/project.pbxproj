@@ -439,7 +439,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.stockViewerFlutter;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.apodViewerFlutter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -462,7 +462,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.stockViewerFlutter;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.apodViewerFlutter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

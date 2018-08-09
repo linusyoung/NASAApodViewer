@@ -1,4 +1,4 @@
-package com.example.stockviewerflutter;
+package com.example.apodviewerflutter;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

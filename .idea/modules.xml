@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/stock_viewer_flutter.iml" filepath="$PROJECT_DIR$/stock_viewer_flutter.iml" />
-      <module fileurl="file://$PROJECT_DIR$/stock_viewer_flutter_android.iml" filepath="$PROJECT_DIR$/stock_viewer_flutter_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apod_viewer_flutter.iml" filepath="$PROJECT_DIR$/apod_viewer_flutter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apod_viewer_flutter_android.iml" filepath="$PROJECT_DIR$/apod_viewer_flutter_android.iml" />
     </modules>
   </component>
 </project>

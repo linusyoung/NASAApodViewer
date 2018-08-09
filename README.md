@@ -1,4 +1,4 @@
-# stock_viewer_flutter
+# APOD Viewer
 
 A new Flutter project.
 
