@@ -147,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
       apod.copyright != '' ? '\u00a9${apod.copyright}' : '',
       overflow: TextOverflow.ellipsis,
     );
-    var mediaWidget = _getMediaWdiget(apod.mediaType);
+    var mediaWidget = getMediaWdiget(apod);
 
     var explanationWidget = Text(
       apod.explanation,
@@ -228,66 +228,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _isFuture() {
     return NASAApi.maxDate.difference(_picDate).isNegative;
-  }
-
-  Widget _getMediaWdiget(String mediaType) {
-    switch (mediaType) {
-      case "image":
-        return GestureDetector(
-          child: FadeInImage.memoryNetwork(
-            placeholder: kTransparentImage,
-            image: apod.url,
-            fit: BoxFit.fitWidth,
-            fadeInDuration: Duration(milliseconds: 400),
-          ),
-          onLongPress: () async {
-            if (await canLaunch(apod.hdurl)) {
-              launch(apod.hdurl);
-            }
-          },
-        );
-      case "video":
-        return Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: RaisedButton(
-                child: Container(
-                  width: 180.0,
-                  height: 50.0,
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.launch),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text("Launch Video in Browser"),
-                      ),
-                    ],
-                  ),
-                ),
-                color: Theme.of(context).primaryColorLight,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0)),
-                onPressed: () async {
-                  if (await canLaunch(apod.url)) {
-                    launch(apod.url);
-                  }
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Not a picture today.",
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14.0,
-                ),
-              ),
-            ),
-          ],
-        );
-    }
   }
 
   void _showFavorite() {

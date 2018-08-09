@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/model/apod_model.dart';
+import 'package:apod_viewer/src/data_util.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:simple_coverflow/simple_coverflow.dart';
@@ -75,13 +76,8 @@ class _FavoriteState extends State<Favorite> {
             ),
           ),
         );
-        // TODO: handle video content
-        var pictureWidget = FadeInImage.memoryNetwork(
-          placeholder: kTransparentImage,
-          image: apod.url,
-          fit: BoxFit.fitWidth,
-          fadeInDuration: Duration(milliseconds: 400),
-        );
+        var mediaWidget = getMediaWdiget(apod);
+
         return Container(
           child: Card(
               margin: EdgeInsets.only(
@@ -94,7 +90,7 @@ class _FavoriteState extends State<Favorite> {
                   titleWidget,
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: pictureWidget,
+                    child: mediaWidget,
                   ),
                   explanationWidget,
                 ],
