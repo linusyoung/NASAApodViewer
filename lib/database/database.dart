@@ -80,11 +80,11 @@ class ApodDatabase {
     return res;
   }
 
-  Future<Apod> getApod(DateTime date) async {
+  Future<Apod> getApod(String date) async {
     var dbClient = await db;
     Apod apod;
-    List<Map> favorite = await dbClient
-        .query("Favorite", where: "date = ?", whereArgs: [strDate(date)]);
+    List<Map> favorite =
+        await dbClient.query("Favorite", where: "date = ?", whereArgs: [date]);
     if (favorite.length > 0) {
       apod = Apod.fromDb(favorite[0]);
     }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/model/apod_model.dart';
+import 'package:apod_viewer/src/apod_history_view.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -55,38 +56,6 @@ class _HistoryState extends State<History> {
     );
   }
 
-  Widget _buildRow(Apod apod) {
-    var titleWidget = Text(apod.title);
-    var dateWidget = Text(apod.date);
-    // TODO: handle video content
-    var pictureWidget = Container(
-      width: 80.0,
-      height: 60.0,
-      child: FadeInImage.memoryNetwork(
-        placeholder: kTransparentImage,
-        image: apod.url,
-        fit: BoxFit.fill,
-        fadeInDuration: Duration(milliseconds: 400),
-      ),
-    );
-
-    return ListTile(
-      title: titleWidget,
-      leading: pictureWidget,
-      trailing: apod.isFavorite
-          ? Icon(
-              Icons.favorite,
-              color: Theme.of(context).primaryColorDark,
-            )
-          : Icon(Icons.favorite_border),
-      subtitle: dateWidget,
-      onTap: () async {
-        await db.updateFavorite(apod);
-        setState(() {});
-      },
-    );
-  }
-
   Widget buildListView(BuildContext context, AsyncSnapshot snapshot) {
     List<Apod> apods = snapshot.data;
     return ListView.builder(
@@ -94,7 +63,7 @@ class _HistoryState extends State<History> {
         itemBuilder: (context, i) {
           if (i.isOdd) return Divider();
           final index = i ~/ 2;
-          return _buildRow(apods[index]);
+          return ApodHistoryView(apod: apods[index]);
         });
   }
 }
