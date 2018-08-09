@@ -25,6 +25,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  static const actions = <Actions>[
+    Actions(icon: Icons.date_range, semanticLabel: "select date"),
+    Actions(icon: Icons.list, semanticLabel: "favorite list"),
+    Actions(icon: Icons.history, semanticLabel: "History"),
+  ];
+
   DateTime _picDate;
   bool _isShakable;
   ApodDatabase db;
@@ -115,26 +121,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             onPressed: _showHistory,
           ),
-          // PopupMenuButton<Actions>(
-          //   onSelected: _select,
-          //   itemBuilder: (BuildContext context) {
-          //     return actions.skip(2).map((Actions action) {
-          //       return PopupMenuItem<Actions>(
-          //         value: action,
-          //         child: Row(
-          //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //           children: <Widget>[
-          //             Text(action.semanticLabel),
-          //             Icon(
-          //               action.icon,
-          //               semanticLabel: action.semanticLabel,
-          //             )
-          //           ],
-          //         ),
-          //       );
-          //     }).toList();
-          //   },
-          // ),
         ],
       ),
       body: _asyncLoader,
@@ -149,15 +135,16 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _getApodContent() {
     var titleWidget = Text(
       apod.title,
-      overflow: TextOverflow.ellipsis,
+      // overflow: TextOverflow.ellipsis,
       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+      textAlign: TextAlign.center,
     );
     var dateWidget = Text(
       apod.date,
       style: TextStyle(),
     );
     var copyrightWidget = Text(
-      apod.copyright,
+      apod.copyright != '' ? '\u00a9${apod.copyright}' : '',
       overflow: TextOverflow.ellipsis,
     );
     var mediaWidget = _getMediaWdiget(apod.mediaType);
@@ -199,16 +186,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 Center(
                   child: Column(
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Flexible(
-                              child: titleWidget,
+                      Row(
+                        children: <Widget>[
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Center(
+                                child: titleWidget,
+                              ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                       Padding(
                         padding: const EdgeInsets.all(4.0),
@@ -263,23 +251,39 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Video can be played in Browser only.",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.0,
+              child: RaisedButton(
+                child: Container(
+                  width: 180.0,
+                  height: 50.0,
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.launch),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text("Launch Video in Browser"),
+                      ),
+                    ],
+                  ),
                 ),
+                color: Theme.of(context).primaryColorLight,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0)),
+                onPressed: () async {
+                  if (await canLaunch(apod.url)) {
+                    launch(apod.url);
+                  }
+                },
               ),
             ),
-            FloatingActionButton.extended(
-              heroTag: UniqueKey(),
-              label: Text('Launch in Browser'),
-              icon: Icon(Icons.launch),
-              onPressed: () async {
-                if (await canLaunch(apod.url)) {
-                  launch(apod.url);
-                }
-              },
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Not a picture today.",
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14.0,
+                ),
+              ),
             ),
           ],
         );
@@ -314,17 +318,4 @@ class _MyHomePageState extends State<MyHomePage> {
       timeInSecForIos: 1,
     );
   }
-
-  // void _select(Actions action) {
-  //   // Causes the app to rebuild with the new _selectedChoice.
-  //   if (action.semanticLabel == "History") {
-  //     _showHistory();
-  //   }
-  // }
 }
-
-const actions = const <Actions>[
-  const Actions(icon: Icons.date_range, semanticLabel: "select date"),
-  const Actions(icon: Icons.list, semanticLabel: "favorite list"),
-  const Actions(icon: Icons.history, semanticLabel: "History"),
-];
