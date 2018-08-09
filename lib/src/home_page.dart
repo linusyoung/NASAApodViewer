@@ -3,11 +3,10 @@ import 'dart:async';
 import 'package:apod_viewer/model/app_actions.dart';
 import 'package:apod_viewer/src/favorite_page.dart';
 import 'package:apod_viewer/src/history_page.dart';
+// import 'package:apod_viewer/src/shake_state.dart';
 import 'package:async_loader/async_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:sensors/sensors.dart';
-import 'package:transparent_image/transparent_image.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:apod_viewer/database/database.dart';
@@ -16,7 +15,10 @@ import 'package:apod_viewer/src/NASAApi.dart';
 import 'package:apod_viewer/src/data_util.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({
+    Key key,
+    @required this.title,
+  }) : super(key: key);
 
   final String title;
 
@@ -54,16 +56,6 @@ class _MyHomePageState extends State<MyHomePage> {
         await Future.delayed(Duration(seconds: 10), () => _isShakable = true);
       }
     });
-  }
-
-  @override
-  void deactivate() {
-    super.deactivate();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -232,11 +224,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _showFavorite() {
     _isShakable = false;
-    Navigator.of(context).push(
+    Navigator.push(
+      context,
       MaterialPageRoute(builder: (context) {
         return Favorite();
       }),
-    );
+    ).then((result) {
+      _isShakable = true;
+    });
   }
 
   void _showHistory() {
@@ -245,7 +240,9 @@ class _MyHomePageState extends State<MyHomePage> {
       MaterialPageRoute(builder: (context) {
         return History();
       }),
-    );
+    ).then((result) {
+      _isShakable = true;
+    });
   }
 
   void _addFavorite() async {

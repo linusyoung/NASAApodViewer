@@ -4,7 +4,6 @@ import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/model/apod_model.dart';
 import 'package:apod_viewer/src/data_util.dart';
 import 'package:flutter/material.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:simple_coverflow/simple_coverflow.dart';
 
 class Favorite extends StatefulWidget {
@@ -21,6 +20,11 @@ class _FavoriteState extends State<Favorite> {
   void initState() {
     super.initState();
     favoriteList = [];
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

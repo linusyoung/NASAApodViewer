@@ -2,7 +2,6 @@ import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/model/apod_model.dart';
 import 'package:apod_viewer/src/data_util.dart';
 import 'package:flutter/material.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class ApodHistoryView extends StatefulWidget {
   final Apod apod;
@@ -49,15 +48,6 @@ class _ApodHistoryViewState extends State<ApodHistoryView> {
     );
 
     var mediaWidget = getMediaWdiget(apodState);
-    // TODO: handle video content
-    // var pictureWidget = Container(
-    //   child: FadeInImage.memoryNetwork(
-    //     placeholder: kTransparentImage,
-    //     image: apodState.url,
-    //     fit: BoxFit.fitWidth,
-    //     fadeInDuration: Duration(milliseconds: 400),
-    //   ),
-    // );
     return ExpansionTile(
       initiallyExpanded: false,
       title: Container(

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:apod_viewer/src/data_util.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -96,7 +95,7 @@ class ApodDatabase {
     List<Map> res = await dbClient
         .query("Favorite", where: "is_favorite = ?", whereArgs: [1]);
     // TODO: remove debug text
-    print('favorite lenght: ${res.map((a) => Apod.fromDb(a)).toList().length}');
+    // print('favorite lenght: ${res.map((a) => Apod.fromDb(a)).toList().length}');
     return res.map((a) => Apod.fromDb(a)).toList();
   }
 
