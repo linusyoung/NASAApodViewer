@@ -9,3 +9,5 @@ build/
 .flutter-plugins
 
 .vscode
+
+src/NASAApi.dart
