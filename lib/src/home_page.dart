@@ -224,12 +224,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _showFavorite() {
     _isShakable = false;
-    Navigator.push(
-      context,
+    Navigator.of(context).push(
       MaterialPageRoute(builder: (context) {
         return Favorite();
       }),
-    ).then((result) {
+    ).then((_) {
       _isShakable = true;
     });
   }
@@ -240,7 +239,7 @@ class _MyHomePageState extends State<MyHomePage> {
       MaterialPageRoute(builder: (context) {
         return History();
       }),
-    ).then((result) {
+    ).then((_) {
       _isShakable = true;
     });
   }
