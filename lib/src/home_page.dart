@@ -122,6 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Icon(Icons.favorite),
         onPressed: _addFavorite,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
