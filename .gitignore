@@ -10,4 +10,4 @@ build/
 
 .vscode
 
-src/NASAApi.dart
+lib/src/NASAApi.dart
