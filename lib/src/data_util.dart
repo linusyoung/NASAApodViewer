@@ -107,5 +107,7 @@ Widget getMediaWdiget(Apod apod) {
           ),
         ],
       );
+    default:
+      return Container();
   }
 }

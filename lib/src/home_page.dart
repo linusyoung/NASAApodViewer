@@ -65,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
       initState: () async {
         apod = await getApodData(_picDate, db);
         await db.updateApod(apod);
+        return null;
       },
       renderLoad: () => Center(child: CircularProgressIndicator()),
       renderError: ([error]) {
