@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     db = ApodDatabase();
     db.initDb();
-    _picDate = DateTime.parse(strDate(NASAApi.maxDate));
+    _picDate = NASAApi.maxDate;
     _isShakable = true;
     accelerometerEvents.listen((AccelerometerEvent event) async {
       if ((event.x.abs() >= 10 && event.y.abs() >= 10) && _isShakable) {
@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final lastDate = DateTime.parse(strDate(NASAApi.maxDate));
+    final lastDate = NASAApi.maxDate;
     var _asyncLoader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async {
