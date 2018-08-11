@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:apod_viewer/model/app_actions.dart';
 import 'package:apod_viewer/src/favorite_page.dart';
 import 'package:apod_viewer/src/history_page.dart';
-// import 'package:apod_viewer/src/shake_state.dart';
 import 'package:async_loader/async_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:sensors/sensors.dart';
@@ -46,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     db = ApodDatabase();
     db.initDb();
-    _picDate = NASAApi.maxDate;
+    _picDate = DateTime.parse(strDate(NASAApi.maxDate));
     _isShakable = true;
     accelerometerEvents.listen((AccelerometerEvent event) async {
       if ((event.x.abs() >= 10 && event.y.abs() >= 10) && _isShakable) {
@@ -60,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final lastDate = DateTime.parse(strDate(NASAApi.maxDate));
     var _asyncLoader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async {
@@ -90,8 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 showDatePicker(
                   context: context,
                   firstDate: NASAApi.minDate,
-                  lastDate: NASAApi.maxDate,
-                  initialDate: _isFuture() ? NASAApi.maxDate : _picDate,
+                  lastDate: lastDate,
+                  initialDate: _isFuture() ? lastDate : _picDate,
                 ).then((DateTime value) {
                   if (value != null) {
                     _picDate = value;
