@@ -47,15 +47,14 @@ class _MyHomePageState extends State<MyHomePage> {
     db.initDb();
     _picDate = NASAApi.maxDate;
     _isShakable = true;
-    // TODO: remvoe later
-    // accelerometerEvents.listen((AccelerometerEvent event) async {
-    //   if ((event.x.abs() >= 10 && event.y.abs() >= 10) && _isShakable) {
-    //     _picDate = getRandomDate();
-    //     _asyncLoaderState.currentState.reloadState();
-    //     _isShakable = false;
-    //     await Future.delayed(Duration(seconds: 10), () => _isShakable = true);
-    //   }
-    // });
+    accelerometerEvents.listen((AccelerometerEvent event) async {
+      if ((event.x.abs() >= 10 && event.y.abs() >= 10) && _isShakable) {
+        _picDate = getRandomDate();
+        _asyncLoaderState.currentState.reloadState();
+        _isShakable = false;
+        await Future.delayed(Duration(seconds: 10), () => _isShakable = true);
+      }
+    });
   }
 
   @override
