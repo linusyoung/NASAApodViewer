@@ -47,14 +47,15 @@ class _MyHomePageState extends State<MyHomePage> {
     db.initDb();
     _picDate = NASAApi.maxDate;
     _isShakable = true;
-    accelerometerEvents.listen((AccelerometerEvent event) async {
-      if ((event.x.abs() >= 10 && event.y.abs() >= 10) && _isShakable) {
-        _picDate = getRandomDate();
-        _asyncLoaderState.currentState.reloadState();
-        _isShakable = false;
-        await Future.delayed(Duration(seconds: 10), () => _isShakable = true);
-      }
-    });
+    // TODO: remvoe later
+    // accelerometerEvents.listen((AccelerometerEvent event) async {
+    //   if ((event.x.abs() >= 10 && event.y.abs() >= 10) && _isShakable) {
+    //     _picDate = getRandomDate();
+    //     _asyncLoaderState.currentState.reloadState();
+    //     _isShakable = false;
+    //     await Future.delayed(Duration(seconds: 10), () => _isShakable = true);
+    //   }
+    // });
   }
 
   @override
@@ -203,10 +204,18 @@ class _MyHomePageState extends State<MyHomePage> {
                           ],
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                        child: mediaWidget,
-                      ),
+                      Stack(
+                          alignment: AlignmentDirectional.center,
+                          children: <Widget>[
+                            apod.mediaType == 'image'
+                                ? CircularProgressIndicator()
+                                : Container(),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                              child: mediaWidget,
+                            ),
+                          ]),
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: explanationWidget,
