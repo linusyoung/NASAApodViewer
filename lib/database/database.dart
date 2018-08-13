@@ -92,8 +92,8 @@ class ApodDatabase {
 
   Future<List<Apod>> getFavoriteApodList() async {
     var dbClient = await db;
-    List<Map> res = await dbClient
-        .query("Favorite", where: "is_favorite = ?", whereArgs: [1]);
+    List<Map> res = await dbClient.query("Favorite",
+        where: "is_favorite = ?", whereArgs: [1], orderBy: "date");
     // TODO: remove debug text
     // print('favorite lenght: ${res.map((a) => Apod.fromDb(a)).toList().length}');
     return res.map((a) => Apod.fromDb(a)).toList();
