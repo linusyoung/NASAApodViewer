@@ -74,7 +74,7 @@ Widget getMediaWdiget(Apod apod) {
             padding: const EdgeInsets.all(8.0),
             child: RaisedButton(
               child: Container(
-                width: 180.0,
+                width: 200.0,
                 height: 50.0,
                 child: Row(
                   children: <Widget>[
