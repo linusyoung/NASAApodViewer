@@ -32,8 +32,18 @@ class _ApodHistoryViewState extends State<ApodHistoryView> {
 
   @override
   Widget build(BuildContext context) {
-    var titleWidget = Text(apodState.title);
-    var dateWidget = Text(apodState.date);
+    var titleWidget = Text(
+      apodState.title,
+      style: TextStyle(
+        fontWeight: FontWeight.w600,
+      ),
+    );
+    var dateWidget = Text(
+      apodState.date,
+      style: TextStyle(
+        fontSize: 10.0,
+      ),
+    );
     var explanationWidget = Container(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
