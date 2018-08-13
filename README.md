@@ -5,7 +5,7 @@ NASA APOD Viewer provides you an easy way to view pictures/videos available in N
 
 ## Features
 
-### version 1.0.0
+### v1.0.0
 - View today's APOD picture/video by default
 - Shake to view a randomly selected one
 - Swipe right/left to navigate to previous/next day
