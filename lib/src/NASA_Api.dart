@@ -15,20 +15,16 @@ class NASAApi {
       strDate(DateTime.now().toUtc().subtract(Duration(hours: 5))));
   static const String urlPrefix = "https://apod.nasa.gov/apod/";
   DateTime date;
-  String userApiKey;
 
   NASAApi({this.date});
 
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  void _getApiKey() async {
+  Future<String> getUrl() async {
+    String dateStr = strDate(date);
     final SharedPreferences prefs = await _prefs;
-    userApiKey = prefs.getString("api_key");
-  }
+    String userApiKey = prefs.getString("api_key");
 
-  String getUrl() {
-    var dateStr = strDate(date);
-    _getApiKey();
     return "$baseUrl?api_key=${userApiKey ?? apiKey}\&date=$dateStr";
   }
 }

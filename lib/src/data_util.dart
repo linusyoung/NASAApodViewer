@@ -2,12 +2,13 @@ import 'dart:async';
 import 'dart:convert' as json;
 import 'dart:math';
 
+import 'package:apod_viewer/src/exception_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/model/apod_model.dart';
-import 'package:apod_viewer/src/NASAApi.dart';
+import 'package:apod_viewer/src/NASA_Api.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -15,17 +16,20 @@ Future<Apod> getApodData(DateTime date, ApodDatabase db) async {
   var apod = await db.getApod(strDate(date));
   if (apod == null) {
     final apiCall = NASAApi(date: date);
-    final requestUrl = apiCall.getUrl();
+    String requestUrl = await apiCall.getUrl().then((String value) => value);
+    print(requestUrl);
     final res = await http.get(requestUrl);
-    if (res.statusCode == 200) {
-      final parsed = json.jsonDecode(res.body);
-      return Apod.fromJson(parsed);
-    } else {
-      throw Exception('Fail to get pictures;');
+    final parsed = json.jsonDecode(res.body);
+    switch (res.statusCode) {
+      case 200:
+        return Apod.fromJson(parsed);
+      case 403:
+        throw ExceptionHelper(message: parsed['error']['code']);
+      case 429:
+        throw ExceptionHelper(message: parsed['error']['code']);
     }
-  } else {
-    return apod;
   }
+  return apod;
 }
 
 DateTime getRandomDate() {

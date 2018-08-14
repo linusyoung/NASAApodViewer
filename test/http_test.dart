@@ -5,11 +5,10 @@
 // are correct.
 
 // import 'dart:convert' as json;
-import 'package:apod_viewer/src/NASAApi.dart';
+import 'package:apod_viewer/src/NASA_Api.dart';
 import 'package:apod_viewer/src/data_util.dart';
 import 'package:flutter_test/flutter_test.dart';
 // import 'package:http/http.dart' as http;
-// import 'package:apod_viewer/src/NASAApi.dart';
 // import 'package:apod_viewer/src/data_util.dart';
 
 void main() {

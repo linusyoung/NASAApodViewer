@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:apod_viewer/model/app_actions.dart';
+import 'package:apod_viewer/model/nasa_api_error.dart';
+import 'package:apod_viewer/src/exception_helper.dart';
 import 'package:apod_viewer/src/favorite_page.dart';
 import 'package:apod_viewer/src/history_page.dart';
 import 'package:async_loader/async_loader.dart';
@@ -11,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/model/apod_model.dart';
-import 'package:apod_viewer/src/NASAApi.dart';
+import 'package:apod_viewer/src/NASA_Api.dart';
 import 'package:apod_viewer/src/data_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -67,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (BuildContext context) {
           return Dialog(
             child: Container(
-              height: 150.0,
+              height: 160.0,
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -81,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         autofocus: true,
                         maxLines: 1,
-                        onSubmitted: (String key) {
+                        onChanged: (String key) {
                           apiKey = key;
                         },
                       ),
@@ -93,7 +95,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Text("Done"),
                           onPressed: () async {
                             Navigator.of(context).pop();
-                            print(apiKey);
                             final SharedPreferences prefs = await _prefs;
                             prefs.setString("api_key", apiKey);
                           },
@@ -141,9 +142,19 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       renderLoad: () => Center(child: CircularProgressIndicator()),
       renderError: ([error]) {
+        String errMessage = error.message.toString();
+        String errMessageText;
+        switch (errMessage) {
+          case NASAErrorCodes.apiKeyInvalid:
+            errMessageText = "Your API key is invalid. Please try again.";
+            break;
+          case NASAErrorCodes.apiKeyOverRateLimit:
+          default:
+            errMessageText =
+                "Sorry, there was an error when loading APOD data.\nPlease try other date.";
+        }
         return Center(
-          child: Text(
-              'Sorry, there was an error when loading APOD data. Please try other date.'),
+          child: Text(errMessageText),
         );
       },
       renderSuccess: ({data}) {
