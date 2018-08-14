@@ -33,19 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Actions(icon: Icons.list, semanticLabel: "favorite list"),
     Actions(icon: Icons.history, semanticLabel: "History"),
   ];
-
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  Future<String> _apiKey;
-
-  Future<Null> _setApiKey(String apiKey) async {
-    final SharedPreferences prefs = await _prefs;
-    prefs.setString("api_key", apiKey);
-  }
-
-  Future<String> _getApiKey() async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.getString("api_key");
-  }
 
   DateTime _picDate;
   bool _isShakable;
@@ -62,7 +50,6 @@ class _MyHomePageState extends State<MyHomePage> {
     db.initDb();
     _picDate = NASAApi.maxDate;
     _isShakable = true;
-    _setApiKey("DEMO_key");
     accelerometerEvents.listen((AccelerometerEvent event) async {
       if ((event.x.abs() >= 10 && event.y.abs() >= 10) && _isShakable) {
         _picDate = getRandomDate();
@@ -74,9 +61,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<String> getUserApiKeyDialog(BuildContext context) {
+    var apiKey;
     return showDialog<String>(
         context: context,
-        // barrierDismissible: false,
         builder: (BuildContext context) {
           return Dialog(
             child: Container(
@@ -94,6 +81,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         autofocus: true,
                         maxLines: 1,
+                        onSubmitted: (String key) {
+                          apiKey = key;
+                        },
                       ),
                     ),
                     Row(
@@ -101,8 +91,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: <Widget>[
                         RaisedButton(
                           child: Text("Done"),
-                          onPressed: () {
+                          onPressed: () async {
                             Navigator.of(context).pop();
+                            print(apiKey);
+                            final SharedPreferences prefs = await _prefs;
+                            prefs.setString("api_key", apiKey);
                           },
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
