@@ -13,6 +13,7 @@ import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/model/apod_model.dart';
 import 'package:apod_viewer/src/NASAApi.dart';
 import 'package:apod_viewer/src/data_util.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({
@@ -75,17 +76,48 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<String> getUserApiKeyDialog(BuildContext context) {
     return showDialog<String>(
         context: context,
-        barrierDismissible: false,
+        // barrierDismissible: false,
         builder: (BuildContext context) {
           return Dialog(
-            child: Card(
-              child: Column(
-                children: <Widget>[
-                  Text("Please provide your NASA API key below:"),
-                  TextField(
-                    autofocus: true,
-                  ),
-                ],
+            child: Container(
+              height: 150.0,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: <Widget>[
+                    Text("Please provide your NASA API key below:"),
+                    Center(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "NASA API key",
+                        ),
+                        autofocus: true,
+                        maxLines: 1,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        RaisedButton(
+                          child: Text("Done"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        RaisedButton(
+                          child: Text("NASA"),
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                            if (await canLaunch(NASAApi.nasaApiKeyUrl)) {
+                              launch(NASAApi.nasaApiKeyUrl);
+                            }
+                          },
+                        )
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           );
