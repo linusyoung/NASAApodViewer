@@ -64,70 +64,131 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<String> getUserApiKeyDialog(BuildContext context) {
     var apiKey;
+
+    var dialogChildren = [
+      Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          child: TextField(
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: "NASA API key",
+            ),
+            autofocus: true,
+            maxLines: 1,
+            onChanged: (String key) {
+              apiKey = key;
+            },
+          ),
+        ),
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          FlatButton(
+            child: Text("Done"),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              final SharedPreferences prefs = await _prefs;
+              prefs.setString("api_key", apiKey);
+            },
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+          ),
+          FlatButton(
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.launch),
+                Padding(
+                  padding: const EdgeInsets.only(left: 5.0),
+                  child: Text("Sign up on NASA"),
+                ),
+              ],
+            ),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              if (await canLaunch(NASAApi.nasaApiKeyUrl)) {
+                launch(NASAApi.nasaApiKeyUrl);
+              }
+            },
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0)),
+          ),
+        ],
+      ),
+    ];
     return showDialog<String>(
         context: context,
         builder: (BuildContext context) {
-          return Dialog(
-            child: Container(
-              height: 160.0,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: <Widget>[
-                    Text("Please provide your NASA API key below:"),
-                    Center(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "NASA API key",
-                        ),
-                        autofocus: true,
-                        maxLines: 1,
-                        onChanged: (String key) {
-                          apiKey = key;
-                        },
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        RaisedButton(
-                          child: Text("Done"),
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                            final SharedPreferences prefs = await _prefs;
-                            prefs.setString("api_key", apiKey);
-                          },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                        ),
-                        RaisedButton(
-                          child: Row(
-                            children: <Widget>[
-                              Icon(Icons.launch),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 5.0),
-                                child: Text("Sign up on NASA"),
-                              ),
-                            ],
-                          ),
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                            if (await canLaunch(NASAApi.nasaApiKeyUrl)) {
-                              launch(NASAApi.nasaApiKeyUrl);
-                            }
-                          },
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0)),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+          return SimpleDialog(
+            title: Text(
+              "Your API key",
             ),
+            children: dialogChildren,
           );
+
+          // Dialog(
+          //   child: Container(
+          //     height: 160.0,
+          //     child: Padding(
+          //       padding: const EdgeInsets.all(20.0),
+          //       child: Column(
+          //         children: <Widget>[
+          //           Text("Please provide your NASA API key below:"),
+          //           Center(
+          //             child: TextField(
+          //               decoration: InputDecoration(
+          //                 border: InputBorder.none,
+          //                 hintText: "NASA API key",
+          //               ),
+          //               autofocus: true,
+          //               maxLines: 1,
+          //               onChanged: (String key) {
+          //                 apiKey = key;
+          //               },
+          //             ),
+          //           ),
+          //           Row(
+          //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //             children: <Widget>[
+          //               RaisedButton(
+          //                 child: Text("Done"),
+          //                 onPressed: () async {
+          //                   Navigator.of(context).pop();
+          //                   final SharedPreferences prefs = await _prefs;
+          //                   prefs.setString("api_key", apiKey);
+          //                 },
+          //                 shape: RoundedRectangleBorder(
+          //                   borderRadius: BorderRadius.circular(30.0),
+          //                 ),
+          //               ),
+          //               RaisedButton(
+          //                 child: Row(
+          //                   children: <Widget>[
+          //                     Icon(Icons.launch),
+          //                     Padding(
+          //                       padding: const EdgeInsets.only(left: 5.0),
+          //                       child: Text("Sign up on NASA"),
+          //                     ),
+          //                   ],
+          //                 ),
+          //                 onPressed: () async {
+          //                   Navigator.of(context).pop();
+          //                   if (await canLaunch(NASAApi.nasaApiKeyUrl)) {
+          //                     launch(NASAApi.nasaApiKeyUrl);
+          //                   }
+          //                 },
+          //                 shape: RoundedRectangleBorder(
+          //                     borderRadius: BorderRadius.circular(30.0)),
+          //               )
+          //             ],
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // );
         });
   }
 
