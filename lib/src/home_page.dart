@@ -104,15 +104,28 @@ class _MyHomePageState extends State<MyHomePage> {
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
                         ),
                         RaisedButton(
-                          child: Text("NASA"),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(Icons.launch),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: Text("Sign up on NASA"),
+                              ),
+                            ],
+                          ),
                           onPressed: () async {
                             Navigator.of(context).pop();
                             if (await canLaunch(NASAApi.nasaApiKeyUrl)) {
                               launch(NASAApi.nasaApiKeyUrl);
                             }
                           },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0)),
                         )
                       ],
                     ),
@@ -207,17 +220,6 @@ class _MyHomePageState extends State<MyHomePage> {
               semanticLabel: actions[2].semanticLabel,
             ),
             onPressed: _showHistory,
-          ),
-          // TODO: test icon remove later
-          IconButton(
-            icon: Icon(
-              Icons.ac_unit,
-            ),
-            onPressed: () async {
-              final SharedPreferences prefs = await _prefs;
-              final String apiKey = prefs.getString("api_key");
-              print(apiKey);
-            },
           ),
         ],
       ),
