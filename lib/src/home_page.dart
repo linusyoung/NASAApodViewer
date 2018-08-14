@@ -7,6 +7,7 @@ import 'package:async_loader/async_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:sensors/sensors.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/model/apod_model.dart';
@@ -32,6 +33,19 @@ class _MyHomePageState extends State<MyHomePage> {
     Actions(icon: Icons.history, semanticLabel: "History"),
   ];
 
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  Future<String> _apiKey;
+
+  Future<Null> _setApiKey(String apiKey) async {
+    final SharedPreferences prefs = await _prefs;
+    prefs.setString("api_key", apiKey);
+  }
+
+  Future<String> _getApiKey() async {
+    final SharedPreferences prefs = await _prefs;
+    return prefs.getString("api_key");
+  }
+
   DateTime _picDate;
   bool _isShakable;
   ApodDatabase db;
@@ -47,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
     db.initDb();
     _picDate = NASAApi.maxDate;
     _isShakable = true;
+    _setApiKey("DEMO_key");
     accelerometerEvents.listen((AccelerometerEvent event) async {
       if ((event.x.abs() >= 10 && event.y.abs() >= 10) && _isShakable) {
         _picDate = getRandomDate();
@@ -55,6 +70,26 @@ class _MyHomePageState extends State<MyHomePage> {
         await Future.delayed(Duration(seconds: 10), () => _isShakable = true);
       }
     });
+  }
+
+  Future<String> getUserApiKeyDialog(BuildContext context) {
+    return showDialog<String>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Dialog(
+            child: Card(
+              child: Column(
+                children: <Widget>[
+                  Text("Please provide your NASA API key below:"),
+                  TextField(
+                    autofocus: true,
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   @override
@@ -77,7 +112,35 @@ class _MyHomePageState extends State<MyHomePage> {
         return _getApodContent();
       },
     );
+    var drawer = Drawer(
+      child: ListView(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: ListTile(
+                title: Text(
+              "Settings",
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+              ),
+            )),
+          ),
+          Divider(),
+          ListTile(
+            title: Text('Use your own API key'),
+            leading: Icon(Icons.vpn_key),
+            onTap: () {
+              Navigator.pop(context);
+              getUserApiKeyDialog(context);
+            },
+          ),
+        ],
+      ),
+    );
+
     return Scaffold(
+      drawer: drawer,
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
@@ -112,6 +175,17 @@ class _MyHomePageState extends State<MyHomePage> {
               semanticLabel: actions[2].semanticLabel,
             ),
             onPressed: _showHistory,
+          ),
+          // TODO: test icon remove later
+          IconButton(
+            icon: Icon(
+              Icons.ac_unit,
+            ),
+            onPressed: () async {
+              final SharedPreferences prefs = await _prefs;
+              final String apiKey = prefs.getString("api_key");
+              print(apiKey);
+            },
           ),
         ],
       ),
