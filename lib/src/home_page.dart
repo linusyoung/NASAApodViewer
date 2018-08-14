@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:apod_viewer/model/app_actions.dart';
 import 'package:apod_viewer/model/nasa_api_error.dart';
-import 'package:apod_viewer/src/exception_helper.dart';
 import 'package:apod_viewer/src/favorite_page.dart';
 import 'package:apod_viewer/src/history_page.dart';
 import 'package:async_loader/async_loader.dart';
@@ -60,136 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
         await Future.delayed(Duration(seconds: 10), () => _isShakable = true);
       }
     });
-  }
-
-  Future<String> getUserApiKeyDialog(BuildContext context) {
-    var apiKey;
-
-    var dialogChildren = [
-      Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: TextField(
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: "NASA API key",
-            ),
-            autofocus: true,
-            maxLines: 1,
-            onChanged: (String key) {
-              apiKey = key;
-            },
-          ),
-        ),
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          FlatButton(
-            child: Text("Done"),
-            onPressed: () async {
-              Navigator.of(context).pop();
-              final SharedPreferences prefs = await _prefs;
-              prefs.setString("api_key", apiKey);
-            },
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
-            ),
-          ),
-          FlatButton(
-            child: Row(
-              children: <Widget>[
-                Icon(Icons.launch),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5.0),
-                  child: Text("Sign up on NASA"),
-                ),
-              ],
-            ),
-            onPressed: () async {
-              Navigator.of(context).pop();
-              if (await canLaunch(NASAApi.nasaApiKeyUrl)) {
-                launch(NASAApi.nasaApiKeyUrl);
-              }
-            },
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0)),
-          ),
-        ],
-      ),
-    ];
-    return showDialog<String>(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            title: Text(
-              "Your API key",
-            ),
-            children: dialogChildren,
-          );
-
-          // Dialog(
-          //   child: Container(
-          //     height: 160.0,
-          //     child: Padding(
-          //       padding: const EdgeInsets.all(20.0),
-          //       child: Column(
-          //         children: <Widget>[
-          //           Text("Please provide your NASA API key below:"),
-          //           Center(
-          //             child: TextField(
-          //               decoration: InputDecoration(
-          //                 border: InputBorder.none,
-          //                 hintText: "NASA API key",
-          //               ),
-          //               autofocus: true,
-          //               maxLines: 1,
-          //               onChanged: (String key) {
-          //                 apiKey = key;
-          //               },
-          //             ),
-          //           ),
-          //           Row(
-          //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //             children: <Widget>[
-          //               RaisedButton(
-          //                 child: Text("Done"),
-          //                 onPressed: () async {
-          //                   Navigator.of(context).pop();
-          //                   final SharedPreferences prefs = await _prefs;
-          //                   prefs.setString("api_key", apiKey);
-          //                 },
-          //                 shape: RoundedRectangleBorder(
-          //                   borderRadius: BorderRadius.circular(30.0),
-          //                 ),
-          //               ),
-          //               RaisedButton(
-          //                 child: Row(
-          //                   children: <Widget>[
-          //                     Icon(Icons.launch),
-          //                     Padding(
-          //                       padding: const EdgeInsets.only(left: 5.0),
-          //                       child: Text("Sign up on NASA"),
-          //                     ),
-          //                   ],
-          //                 ),
-          //                 onPressed: () async {
-          //                   Navigator.of(context).pop();
-          //                   if (await canLaunch(NASAApi.nasaApiKeyUrl)) {
-          //                     launch(NASAApi.nasaApiKeyUrl);
-          //                   }
-          //                 },
-          //                 shape: RoundedRectangleBorder(
-          //                     borderRadius: BorderRadius.circular(30.0)),
-          //               )
-          //             ],
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // );
-        });
   }
 
   @override
@@ -270,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   context: context,
                   firstDate: NASAApi.minDate,
                   lastDate: lastDate,
-                  initialDate: _isFuture() ? lastDate : _picDate,
+                  initialDate: _isLoadingFuture() ? lastDate : _picDate,
                 ).then((DateTime value) {
                   if (value != null) {
                     _picDate = value;
@@ -304,6 +173,74 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Future<String> getUserApiKeyDialog(BuildContext context) {
+    String apiKey;
+    var apiKeyInput = TextField(
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintText: "NASA API key",
+      ),
+      autofocus: true,
+      maxLines: 1,
+      onChanged: (String key) {
+        apiKey = key;
+      },
+    );
+    var launchNasaSite = FlatButton(
+      child: Row(
+        children: <Widget>[
+          Icon(Icons.launch),
+          Padding(
+            padding: const EdgeInsets.only(left: 5.0),
+            child: Text("Sign up on NASA"),
+          ),
+        ],
+      ),
+      onPressed: () async {
+        Navigator.of(context).pop();
+        if (await canLaunch(NASAApi.nasaApiKeyUrl)) {
+          launch(NASAApi.nasaApiKeyUrl);
+        }
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+    );
+    List<Widget> dialogChildren = [
+      Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          child: apiKeyInput,
+        ),
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          FlatButton(
+            child: Text("Done"),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              final SharedPreferences prefs = await _prefs;
+              prefs.setString("api_key", apiKey);
+            },
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+          ),
+          launchNasaSite,
+        ],
+      ),
+    ];
+    return showDialog<String>(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text(
+              "Your API key",
+            ),
+            children: dialogChildren,
+          );
+        });
+  }
+
   Widget _getApodContent() {
     var titleWidget = Text(
       apod.title,
@@ -320,11 +257,70 @@ class _MyHomePageState extends State<MyHomePage> {
       overflow: TextOverflow.ellipsis,
     );
     var mediaWidget = getMediaWdiget(apod);
-
     var explanationWidget = Text(
       apod.explanation,
       softWrap: true,
       textAlign: TextAlign.justify,
+    );
+    var tomorrowWidget = Center(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          '${strDate(_picDate)} isn\'t available!\nSwipe right or select a date from Calendar.',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 30.0,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+    var selectedDateWidget = ListView(
+      children: <Widget>[
+        Center(
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: titleWidget,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    dateWidget,
+                    Flexible(
+                      child: copyrightWidget,
+                    ),
+                  ],
+                ),
+              ),
+              Stack(alignment: AlignmentDirectional.center, children: <Widget>[
+                apod.mediaType == 'image'
+                    ? CircularProgressIndicator()
+                    : Container(),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: mediaWidget,
+                ),
+              ]),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: explanationWidget,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
 
     return Dismissible(
@@ -333,80 +329,17 @@ class _MyHomePageState extends State<MyHomePage> {
         var _dayDiff = 0;
         _dayDiff += direction == DismissDirection.endToStart ? 1 : -1;
         _picDate = _picDate.add(Duration(days: _dayDiff));
-        if (_isFuture()) {
+        if (_isLoadingFuture()) {
           setState(() {});
         } else {
           _asyncLoaderState.currentState.reloadState();
         }
       },
-      child: _isFuture()
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  '${strDate(_picDate)} isn\'t available!\nSwipe right or select a date from Calendar.',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30.0,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )
-          : ListView(
-              children: <Widget>[
-                Center(
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Flexible(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Center(
-                                child: titleWidget,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            dateWidget,
-                            Flexible(
-                              child: copyrightWidget,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Stack(
-                          alignment: AlignmentDirectional.center,
-                          children: <Widget>[
-                            apod.mediaType == 'image'
-                                ? CircularProgressIndicator()
-                                : Container(),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                              child: mediaWidget,
-                            ),
-                          ]),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: explanationWidget,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+      child: _isLoadingFuture() ? tomorrowWidget : selectedDateWidget,
     );
   }
 
-  bool _isFuture() {
+  bool _isLoadingFuture() {
     return NASAApi.maxDate.difference(_picDate).isNegative;
   }
 
