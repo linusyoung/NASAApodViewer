@@ -149,6 +149,12 @@ class _MyHomePageState extends State<MyHomePage> {
             errMessageText = "Your API key is invalid. Please try again.";
             break;
           case NASAErrorCodes.apiKeyOverRateLimit:
+            errMessageText = '''
+                  API key over rate limit.
+                  Please use your own API key.
+                  If you already use your own API key. 
+                  Please try later''';
+            break;
           default:
             errMessageText =
                 "Sorry, there was an error when loading APOD data.\nPlease try other date.";

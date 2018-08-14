@@ -1,4 +1,4 @@
-class ExceptionHandler implements Exception {
+class ExceptionHelper implements Exception {
   final String message;
-  ExceptionHandler({this.message});
+  ExceptionHelper({this.message});
 }
