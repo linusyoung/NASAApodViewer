@@ -42,6 +42,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Apod apod;
   final _asyncLoaderState = GlobalKey<AsyncLoaderState>();
   List<Apod> favoriteList = List();
+  String userApiKey;
+  String settingApiKeyText = "Your NASA API key is in used.";
+  bool _isUserApiKeyInUse = false;
 
   @override
   void initState() {
@@ -68,6 +71,9 @@ class _MyHomePageState extends State<MyHomePage> {
       initState: () async {
         apod = await getApodData(_picDate, db);
         await db.updateApod(apod);
+        userApiKey = await _prefs.then((pref) {
+          return pref.getString("api_key");
+        });
       },
       renderLoad: () => Center(child: CircularProgressIndicator()),
       renderError: ([error]) {
@@ -114,7 +120,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           ListTile(
-            title: Text('Use your own NASA API key'),
+            title: Text(_isUserApiKeyInUse
+                ? settingApiKeyText
+                : "Use your own NASA API key"),
+            subtitle: Text(userApiKey ?? ""),
             leading: Icon(Icons.vpn_key),
             onTap: () {
               Navigator.pop(context);
@@ -123,6 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
+      semanticLabel: "Settings",
     );
 
     var actionsMenu = [
@@ -174,7 +184,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<String> getUserApiKeyDialog(BuildContext context) {
-    String apiKey;
     var apiKeyInput = TextField(
       decoration: InputDecoration(
         border: InputBorder.none,
@@ -183,7 +192,10 @@ class _MyHomePageState extends State<MyHomePage> {
       autofocus: true,
       maxLines: 1,
       onChanged: (String key) {
-        apiKey = key;
+        setState(() {
+          userApiKey = key;
+          _isUserApiKeyInUse = true;
+        });
       },
     );
     var launchNasaSite = FlatButton(
@@ -219,7 +231,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () async {
               Navigator.of(context).pop();
               final SharedPreferences prefs = await _prefs;
-              prefs.setString("api_key", apiKey);
+              prefs.setString("api_key", userApiKey);
             },
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30.0),
@@ -234,7 +246,7 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (BuildContext context) {
           return SimpleDialog(
             title: Text(
-              "Your API key",
+              "Your API key below:",
             ),
             children: dialogChildren,
           );
