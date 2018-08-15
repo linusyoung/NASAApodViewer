@@ -101,15 +101,16 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
-            child: Container(
-              color: Theme.of(context).primaryColorLight,
-              child: ListTile(
-                title: Text(
+            child: DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+              ),
+              // color: Theme.of(context).primaryColor,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 80.0),
+                child: Text(
                   "Settings",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).primaryTextTheme.headline,
                 ),
               ),
             ),
