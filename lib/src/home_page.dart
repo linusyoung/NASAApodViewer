@@ -100,19 +100,22 @@ class _MyHomePageState extends State<MyHomePage> {
       child: ListView(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: ListTile(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Container(
+              color: Theme.of(context).primaryColorLight,
+              child: ListTile(
                 title: Text(
-              "Settings",
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
+                  "Settings",
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-            )),
+            ),
           ),
-          Divider(),
           ListTile(
-            title: Text('Use your own API key'),
+            title: Text('Use your own NASA API key'),
             leading: Icon(Icons.vpn_key),
             onTap: () {
               Navigator.pop(context);
