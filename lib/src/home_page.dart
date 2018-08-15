@@ -31,7 +31,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   static const actions = <Actions>[
     Actions(icon: Icons.date_range, semanticLabel: "select date"),
-    Actions(icon: Icons.list, semanticLabel: "favorite list"),
+    Actions(icon: Icons.list, semanticLabel: "Favorite"),
     Actions(icon: Icons.history, semanticLabel: "History"),
   ];
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -41,7 +41,6 @@ class _MyHomePageState extends State<MyHomePage> {
   ApodDatabase db;
   Apod apod;
   final _asyncLoaderState = GlobalKey<AsyncLoaderState>();
-
   List<Apod> favoriteList = List();
 
   @override
@@ -124,44 +123,43 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
+    var actionsMenu = [
+      IconButton(
+          icon: Icon(
+            actions[0].icon,
+            semanticLabel: actions[0].semanticLabel,
+          ),
+          onPressed: () {
+            showDatePicker(
+              context: context,
+              firstDate: NASAApi.minDate,
+              lastDate: lastDate,
+              initialDate: _isLoadingFuture() ? lastDate : _picDate,
+            ).then((DateTime value) {
+              if (value != null) {
+                _picDate = value;
+                _asyncLoaderState.currentState.reloadState();
+              }
+            });
+          }),
+      PopupMenuButton<Actions>(
+        onSelected: _onActionSelect,
+        itemBuilder: (BuildContext context) {
+          return actions.skip(1).map((Actions action) {
+            return PopupMenuItem<Actions>(
+              value: action,
+              child: Text(action.semanticLabel),
+            );
+          }).toList();
+        },
+      ),
+    ];
+
     return Scaffold(
       drawer: drawer,
       appBar: AppBar(
         title: Text(widget.title),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(
-                actions[0].icon,
-                semanticLabel: actions[0].semanticLabel,
-              ),
-              onPressed: () {
-                showDatePicker(
-                  context: context,
-                  firstDate: NASAApi.minDate,
-                  lastDate: lastDate,
-                  initialDate: _isLoadingFuture() ? lastDate : _picDate,
-                ).then((DateTime value) {
-                  if (value != null) {
-                    _picDate = value;
-                    _asyncLoaderState.currentState.reloadState();
-                  }
-                });
-              }),
-          IconButton(
-            icon: Icon(
-              actions[1].icon,
-              semanticLabel: actions[1].semanticLabel,
-            ),
-            onPressed: _showFavorite,
-          ),
-          IconButton(
-            icon: Icon(
-              actions[2].icon,
-              semanticLabel: actions[2].semanticLabel,
-            ),
-            onPressed: _showHistory,
-          ),
-        ],
+        actions: actionsMenu,
       ),
       body: _asyncLoader,
       floatingActionButton: FloatingActionButton(
@@ -341,6 +339,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _isLoadingFuture() {
     return NASAApi.maxDate.difference(_picDate).isNegative;
+  }
+
+  void _onActionSelect(Actions action) {
+    switch (action.semanticLabel) {
+      case 'Favorite':
+        _showFavorite();
+        break;
+      case 'History':
+        _showHistory();
+        break;
+    }
   }
 
   void _showFavorite() {
