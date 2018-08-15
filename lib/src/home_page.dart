@@ -98,20 +98,18 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     var drawer = Drawer(
       child: ListView(
+        padding: EdgeInsets.zero,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: DrawerHeader(
-              // TODO: add image from unsplash
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 80.0),
-                child: Text(
-                  "Settings",
-                  style: Theme.of(context).primaryTextTheme.headline,
-                ),
+          DrawerHeader(
+            // TODO: add image from unsplash
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 80.0),
+              child: Text(
+                "Settings",
+                style: Theme.of(context).primaryTextTheme.headline,
               ),
             ),
           ),
