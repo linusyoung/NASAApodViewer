@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:apod_viewer/model/app_actions.dart';
 import 'package:apod_viewer/model/nasa_api_error.dart';
+import 'package:apod_viewer/src/draw_view.dart';
 import 'package:apod_viewer/src/favorite_page.dart';
 import 'package:apod_viewer/src/history_page.dart';
 import 'package:async_loader/async_loader.dart';
@@ -49,6 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
     db.initDb();
     _picDate = NASAApi.maxDate;
     _isShakable = true;
+
     accelerometerEvents.listen((AccelerometerEvent event) async {
       if ((event.x.abs() >= 10 && event.y.abs() >= 10) && _isShakable) {
         _picDate = getRandomDate();
@@ -62,10 +64,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final lastDate = NASAApi.maxDate;
+
     var _asyncLoader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async {
-        userApiKey = await db.getUserApiKey();
         apod = await getApodData(_picDate, db);
         await db.updateApod(apod);
       },
@@ -96,43 +98,8 @@ class _MyHomePageState extends State<MyHomePage> {
         return _getApodContent();
       },
     );
-    String settingApiKeyText;
-    if (userApiKey == null) {
-      settingApiKeyText = "Use your own NASA API key";
-    } else {
-      settingApiKeyText = "Your NASA API key is in use";
-    }
-    var drawer = Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            // TODO: add image from unsplash
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 80.0),
-              child: Text(
-                "Settings",
-                style: Theme.of(context).primaryTextTheme.headline,
-              ),
-            ),
-          ),
-          ListTile(
-            title: Text(settingApiKeyText),
-            subtitle: Text(userApiKey ?? ""),
-            leading: Icon(Icons.vpn_key),
-            onTap: () {
-              Navigator.pop(context);
-              getUserApiKeyDialog(context);
-            },
-          ),
-        ],
-      ),
-      semanticLabel: "Settings",
-    );
 
+    var drawer = SettingDrawer();
     var actionsMenu = [
       IconButton(
           icon: Icon(
@@ -179,72 +146,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
-  }
-
-  Future<String> getUserApiKeyDialog(BuildContext context) {
-    var apiKeyInput = TextField(
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: "NASA API key",
-      ),
-      autofocus: true,
-      maxLines: 1,
-      onChanged: (String key) {
-        userApiKey = key;
-      },
-    );
-    var launchNasaSite = FlatButton(
-      child: Row(
-        children: <Widget>[
-          Icon(Icons.launch),
-          Padding(
-            padding: const EdgeInsets.only(left: 5.0),
-            child: Text("Sign up on NASA"),
-          ),
-        ],
-      ),
-      onPressed: () async {
-        Navigator.of(context).pop();
-        if (await canLaunch(NASAApi.nasaApiKeyUrl)) {
-          launch(NASAApi.nasaApiKeyUrl);
-        }
-      },
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-    );
-    List<Widget> dialogChildren = [
-      Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: apiKeyInput,
-        ),
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          FlatButton(
-            child: Text("Done"),
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await db.updateApiKey(userApiKey);
-            },
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
-            ),
-          ),
-          launchNasaSite,
-        ],
-      ),
-    ];
-    return showDialog<String>(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            title: Text(
-              "Your API key below:",
-            ),
-            children: dialogChildren,
-          );
-        });
   }
 
   Widget _getApodContent() {
