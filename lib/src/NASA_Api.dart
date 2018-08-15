@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/src/data_util.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NASAApi {
   static const String nasaApiKeyUrl =
@@ -18,13 +18,10 @@ class NASAApi {
 
   NASAApi({this.date});
 
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-
   Future<String> getUrl() async {
     String dateStr = strDate(date);
-    final SharedPreferences prefs = await _prefs;
-    String userApiKey = prefs.getString("api_key");
-
+    final db = ApodDatabase();
+    String userApiKey = await db.getUserApiKey();
     return "$baseUrl?api_key=${userApiKey ?? apiKey}\&date=$dateStr";
   }
 }

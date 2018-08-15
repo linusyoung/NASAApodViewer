@@ -17,6 +17,7 @@ Future<Apod> getApodData(DateTime date, ApodDatabase db) async {
   if (apod == null) {
     final apiCall = NASAApi(date: date);
     String requestUrl = await apiCall.getUrl().then((String value) => value);
+    print(requestUrl);
     final res = await http.get(requestUrl);
     final parsed = json.jsonDecode(res.body);
     switch (res.statusCode) {

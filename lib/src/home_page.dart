@@ -8,7 +8,6 @@ import 'package:async_loader/async_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:sensors/sensors.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:apod_viewer/database/database.dart';
 import 'package:apod_viewer/model/apod_model.dart';
@@ -34,7 +33,6 @@ class _MyHomePageState extends State<MyHomePage> {
     Actions(icon: Icons.list, semanticLabel: "Favorite"),
     Actions(icon: Icons.history, semanticLabel: "History"),
   ];
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   DateTime _picDate;
   bool _isShakable;
@@ -43,8 +41,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final _asyncLoaderState = GlobalKey<AsyncLoaderState>();
   List<Apod> favoriteList = List();
   String userApiKey;
-  String settingApiKeyText = "Your NASA API key is in used.";
-  bool _isUserApiKeyInUse = false;
 
   @override
   void initState() {
@@ -69,11 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
     var _asyncLoader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async {
+        userApiKey = await db.getUserApiKey();
         apod = await getApodData(_picDate, db);
         await db.updateApod(apod);
-        userApiKey = await _prefs.then((pref) {
-          return pref.getString("api_key");
-        });
       },
       renderLoad: () => Center(child: CircularProgressIndicator()),
       renderError: ([error]) {
@@ -102,6 +96,12 @@ class _MyHomePageState extends State<MyHomePage> {
         return _getApodContent();
       },
     );
+    String settingApiKeyText;
+    if (userApiKey == null) {
+      settingApiKeyText = "Use your own NASA API key";
+    } else {
+      settingApiKeyText = "Your NASA API key is in use";
+    }
     var drawer = Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -120,9 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           ListTile(
-            title: Text(_isUserApiKeyInUse
-                ? settingApiKeyText
-                : "Use your own NASA API key"),
+            title: Text(settingApiKeyText),
             subtitle: Text(userApiKey ?? ""),
             leading: Icon(Icons.vpn_key),
             onTap: () {
@@ -192,10 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
       autofocus: true,
       maxLines: 1,
       onChanged: (String key) {
-        setState(() {
-          userApiKey = key;
-          _isUserApiKeyInUse = true;
-        });
+        userApiKey = key;
       },
     );
     var launchNasaSite = FlatButton(
@@ -230,8 +225,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text("Done"),
             onPressed: () async {
               Navigator.of(context).pop();
-              final SharedPreferences prefs = await _prefs;
-              prefs.setString("api_key", userApiKey);
+              await db.updateApiKey(userApiKey);
             },
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30.0),

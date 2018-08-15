@@ -28,8 +28,20 @@ class ApodDatabase {
   initDb() async {
     Directory documentDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentDirectory.path, "main.db");
-    var theDb = await openDatabase(path, version: 1, onCreate: _onCreate);
+    var theDb = await openDatabase(
+      path,
+      version: 2,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
+    );
     return theDb;
+  }
+
+  void _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    await db.execute('''CREATE TABLE APIKey(
+      api_key TEXT PRIMARY KEY,
+      key_type TEXT
+    )''');
   }
 
   void _onCreate(Database db, int version) async {
@@ -43,6 +55,11 @@ class ApodDatabase {
         media_type TEXT,
         service_version TEXT,
         is_favorite BIT)''');
+
+    await db.execute('''CREATE TABLE APIKey(
+      api_key TEXT PRIMARY KEY,
+      key_type TEXT
+    )''');
   }
 
   Future<int> updateApod(Apod apod) async {
@@ -61,14 +78,35 @@ class ApodDatabase {
     return res;
   }
 
-  // Future<int> deleteApod(String date) async {
-  //   var dbClient = await db;
-  //   int res =
-  //       await dbClient.delete("Favorite", where: "date = ?", whereArgs: [date]);
-  //   // TODO: remove debug text
-  //   // print('Favorite was deleted $res');
-  //   return res;
-  // }
+  Future<int> updateApiKey(String apiKey) async {
+    var dbClient = await db;
+    int res;
+    var map = Map<String, dynamic>();
+    map['api_key'] = apiKey;
+    map['key_type'] = "user";
+    List<Map> exist = await dbClient
+        .query("APIKey", where: "key_type = ?", whereArgs: ["user"]);
+    if (exist.length == 0) {
+      res = await dbClient.insert("APIKey", map);
+      // TODO: remove debug text
+      print('Apikey added $res');
+    } else {
+      res = await dbClient.update("APIKey", map);
+      print('Apikey updated');
+    }
+    return res;
+  }
+
+  Future<String> getUserApiKey() async {
+    var dbClient = await db;
+    String apiKey;
+    List<Map> res = await dbClient
+        .query("APIKey", where: "key_type = ?", whereArgs: ["user"]);
+    if (res.length > 0) {
+      apiKey = res[0]['api_key'];
+    }
+    return apiKey;
+  }
 
   Future<int> updateFavorite(Apod apod) async {
     var dbClient = await db;

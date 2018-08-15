@@ -25,7 +25,6 @@ dependencies:
   simple_coverflow: ^0.0.6
   async_loader: ^0.1.1
   fluttertoast: ^2.0.7
-  shared_preferences: ^0.4.2
 
 dev_dependencies:
   flutter_test:
