@@ -102,10 +102,10 @@ class _MyHomePageState extends State<MyHomePage> {
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: DrawerHeader(
+              // TODO: add image from unsplash
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
               ),
-              // color: Theme.of(context).primaryColor,
               child: Padding(
                 padding: const EdgeInsets.only(top: 80.0),
                 child: Text(
