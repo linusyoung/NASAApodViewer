@@ -1,19 +1,19 @@
 import 'dart:async';
 
-import 'package:apod_viewer/model/app_actions.dart';
-import 'package:apod_viewer/model/nasa_api_error.dart';
-import 'package:apod_viewer/src/draw_view.dart';
-import 'package:apod_viewer/src/favorite_page.dart';
-import 'package:apod_viewer/src/history_page.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/model/app_actions.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/model/nasa_api_error.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/src/draw_view.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/src/favorite_page.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/src/history_page.dart';
 import 'package:async_loader/async_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:sensors/sensors.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'package:apod_viewer/database/database.dart';
-import 'package:apod_viewer/model/apod_model.dart';
-import 'package:apod_viewer/src/NASA_Api.dart';
-import 'package:apod_viewer/src/data_util.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/database/database.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/model/apod_model.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/src/NASA_Api.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/src/data_util.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({

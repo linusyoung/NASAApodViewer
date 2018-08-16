@@ -1,0 +1,3 @@
+- shake to see a random date picture from APOD site
+- save your favorite date
+- view all the history

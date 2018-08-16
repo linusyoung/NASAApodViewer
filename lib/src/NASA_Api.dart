@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:apod_viewer/database/database.dart';
-import 'package:apod_viewer/src/data_util.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/database/database.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/src/data_util.dart';
 
 class NASAApi {
   static const String nasaApiKeyUrl =

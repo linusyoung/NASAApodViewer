@@ -1,0 +1,10 @@
+Like to see cosmosics pictures? want to know what happens in the universe?
+
+Get inspired by NASA APOD projects. You can see a new picture every day and check all the historical pictures and videos from NASA APOD website.
+
+Feel like today? Just shake your phone to view a picture, which is randomly selected.
+
+Features:
+ - shake to view a picture/video from a randomly selected date
+ - long press on picture to view hd pictures if available.
+ - all viewed history are stored locally

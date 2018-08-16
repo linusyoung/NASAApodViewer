@@ -1,0 +1,3 @@
+- Users can provide their own NASA API key instead of using a shared one.
+- move Favorite and History actions to "overflow" menu such that app title always displays in full.
+- bug fixes

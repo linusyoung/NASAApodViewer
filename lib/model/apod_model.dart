@@ -1,4 +1,4 @@
-import 'package:apod_viewer/src/data_util.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/src/data_util.dart';
 
 class Apod {
   final String copyright;

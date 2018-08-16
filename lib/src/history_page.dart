@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:apod_viewer/database/database.dart';
-import 'package:apod_viewer/model/apod_model.dart';
-import 'package:apod_viewer/src/apod_history_view.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/database/database.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/model/apod_model.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/src/apod_history_view.dart';
 import 'package:flutter/material.dart';
 
 class History extends StatefulWidget {

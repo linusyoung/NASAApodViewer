@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:apod_viewer/database/database.dart';
-import 'package:apod_viewer/src/NASA_Api.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/database/database.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/src/NASA_Api.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 

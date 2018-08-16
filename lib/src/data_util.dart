@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:convert' as json;
 import 'dart:math';
 
-import 'package:apod_viewer/src/exception_helper.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/src/exception_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:apod_viewer/database/database.dart';
-import 'package:apod_viewer/model/apod_model.dart';
-import 'package:apod_viewer/src/NASA_Api.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/database/database.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/model/apod_model.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/src/NASA_Api.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 

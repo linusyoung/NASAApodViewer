@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:apod_viewer/database/database.dart';
-import 'package:apod_viewer/model/apod_model.dart';
-import 'package:apod_viewer/src/data_util.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/database/database.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/model/apod_model.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/src/data_util.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_coverflow/simple_coverflow.dart';
 
