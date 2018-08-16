@@ -55,7 +55,8 @@ class _SettingDrawerState extends State<SettingDrawer> {
                             alignment: Alignment.centerRight,
                             child: Text(
                               "v1.0.2",
-                              style: TextStyle(color: Colors.white),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 8.0),
                             ),
                           ),
                         ],
