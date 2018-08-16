@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:apod_viewer/src/home_page.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/src/home_page.dart';
 
 void main() => runApp(new MyApp());
 

@@ -5,7 +5,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'package:apod_viewer/model/apod_model.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/model/apod_model.dart';
 
 class ApodDatabase {
   static final ApodDatabase _instance = ApodDatabase._internal();
