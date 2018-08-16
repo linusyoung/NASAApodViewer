@@ -40,10 +40,25 @@ class _SettingDrawerState extends State<SettingDrawer> {
                       color: Theme.of(context).primaryColor,
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 80.0),
-                      child: Text(
-                        "Settings",
-                        style: Theme.of(context).primaryTextTheme.headline,
+                      padding: EdgeInsets.only(top: 100.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                              "Settings",
+                              style:
+                                  Theme.of(context).primaryTextTheme.headline,
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              "v1.0.2",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -56,6 +71,14 @@ class _SettingDrawerState extends State<SettingDrawer> {
                       Navigator.of(context).pop();
                     },
                   ),
+
+                  // Column(
+                  //   mainAxisSize: MainAxisSize.max,
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: <Widget>[
+                  //     Text('v1.0.2'),
+                  //   ],
+                  // ),
                 ],
               ),
               semanticLabel: "Settings",
