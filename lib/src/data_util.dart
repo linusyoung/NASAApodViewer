@@ -119,6 +119,7 @@ Widget getMediaWdiget(Apod apod) {
 
 Future<UnsplashPhoto> getRandomUnsplash() async {
   final String url = "${UnsplashPhoto.baseUrl}\/photos\/random";
+  // Your unsplash api access key here or put into a separate file
   final String accessKey = UnsplashKey.accessKey;
   final Map<String, String> header = {"Authorization": "Client-ID $accessKey"};
   final res = await http.get(url, headers: header);
