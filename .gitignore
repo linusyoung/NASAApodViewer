@@ -11,3 +11,5 @@ build/
 .vscode
 
 android/*.properties
+android/fastlane/report.xml
+lib/model/unsplash_key.dart

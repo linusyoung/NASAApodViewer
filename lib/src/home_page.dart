@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:club.swimmingbeaver.apodviewerflutter/model/NASA_Api.dart';
 import 'package:club.swimmingbeaver.apodviewerflutter/model/app_actions.dart';
 import 'package:club.swimmingbeaver.apodviewerflutter/model/nasa_api_error.dart';
 import 'package:club.swimmingbeaver.apodviewerflutter/src/draw_view.dart';
@@ -12,7 +13,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:club.swimmingbeaver.apodviewerflutter/database/database.dart';
 import 'package:club.swimmingbeaver.apodviewerflutter/model/apod_model.dart';
-import 'package:club.swimmingbeaver.apodviewerflutter/src/NASA_Api.dart';
 import 'package:club.swimmingbeaver.apodviewerflutter/src/data_util.dart';
 
 class MyHomePage extends StatefulWidget {

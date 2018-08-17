@@ -2,14 +2,16 @@ import 'dart:async';
 import 'dart:convert' as json;
 import 'dart:math';
 
+import 'package:club.swimmingbeaver.apodviewerflutter/model/NASA_Api.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/model/unsplash_model.dart';
 import 'package:club.swimmingbeaver.apodviewerflutter/src/exception_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:club.swimmingbeaver.apodviewerflutter/database/database.dart';
 import 'package:club.swimmingbeaver.apodviewerflutter/model/apod_model.dart';
-import 'package:club.swimmingbeaver.apodviewerflutter/src/NASA_Api.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/model/unsplash_key.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<Apod> getApodData(DateTime date, ApodDatabase db) async {
@@ -17,7 +19,6 @@ Future<Apod> getApodData(DateTime date, ApodDatabase db) async {
   if (apod == null) {
     final apiCall = NASAApi(date: date);
     String requestUrl = await apiCall.getUrl().then((String value) => value);
-    print(requestUrl);
     final res = await http.get(requestUrl);
     final parsed = json.jsonDecode(res.body);
     switch (res.statusCode) {
@@ -114,4 +115,16 @@ Widget getMediaWdiget(Apod apod) {
     default:
       return Container();
   }
+}
+
+Future<UnsplashPhoto> getRandomUnsplash() async {
+  final String url = "${UnsplashPhoto.baseUrl}\/photos\/random";
+  final String accessKey = UnsplashKey.accessKey;
+  final Map<String, String> header = {"Authorization": "Client-ID $accessKey"};
+  final res = await http.get(url, headers: header);
+  final parsed = json.jsonDecode(res.body);
+  if (res.statusCode == 200) {
+    return UnsplashPhoto.fromJson(parsed);
+  }
+  return null;
 }

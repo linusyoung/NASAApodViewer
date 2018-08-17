@@ -5,25 +5,13 @@
 // are correct.
 
 // import 'dart:convert' as json;
-import 'package:club.swimmingbeaver.apodviewerflutter/src/NASA_Api.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/model/NASA_Api.dart';
 import 'package:club.swimmingbeaver.apodviewerflutter/src/data_util.dart';
 import 'package:flutter_test/flutter_test.dart';
 // import 'package:http/http.dart' as http;
 // import 'package:club.swimmingbeaver.apodviewerflutter/src/data_util.dart';
 
 void main() {
-  // test('Get picture json from NASA', () async {
-  //   final apiCall = NASAApi();
-  //   final requestUrl = apiCall.getUrl();
-  //   print(requestUrl);
-  //   final res = await http.get(requestUrl);
-  //   if (res.statusCode == 200){
-  //     final parsed = json.jsonDecode(res.body);
-  //     final apod = Apodpic.fromJson(parsed);
-  //     expect(apod.date, '2018-07-26');
-  //   }
-  // },skip: true);
-
   test('String date', () {
     final today = DateTime.now();
     final expected = today.toString().substring(0, 10);
