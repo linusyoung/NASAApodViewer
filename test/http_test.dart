@@ -4,12 +4,9 @@
 // find child widgets in the widget tree, read text, and verify that the values of widget properties
 // are correct.
 
-// import 'dart:convert' as json;
 import 'package:club.swimmingbeaver.apodviewerflutter/model/NASA_Api.dart';
 import 'package:club.swimmingbeaver.apodviewerflutter/src/data_util.dart';
 import 'package:flutter_test/flutter_test.dart';
-// import 'package:http/http.dart' as http;
-// import 'package:club.swimmingbeaver.apodviewerflutter/src/data_util.dart';
 
 void main() {
   test('String date', () {
