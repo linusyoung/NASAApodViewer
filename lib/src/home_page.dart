@@ -90,7 +90,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 "Sorry, there was an error when loading APOD data.\nPlease try other date.";
         }
         return Center(
-          child: Text(errMessageText),
+          child: Text(
+            errMessageText,
+            style: Theme.of(context).textTheme.subhead,
+          ),
         );
       },
       renderSuccess: ({data}) {
@@ -139,7 +142,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: _asyncLoader,
       floatingActionButton: FloatingActionButton(
-        heroTag: UniqueKey(),
         child: Icon(Icons.favorite),
         onPressed: _addFavorite,
       ),

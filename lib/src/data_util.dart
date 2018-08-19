@@ -126,6 +126,7 @@ Future<UnsplashPhoto> getRandomUnsplash() async {
   final parsed = json.jsonDecode(res.body);
   if (res.statusCode == 200) {
     return UnsplashPhoto.fromJson(parsed);
+  } else {
+    throw Exception('Unsplash exceptions');
   }
-  return null;
 }

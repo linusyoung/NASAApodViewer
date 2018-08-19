@@ -13,7 +13,8 @@ class UnsplashPhoto {
     return UnsplashPhoto(
       smallUrl: json['urls']['small'],
       fullUrl: json['links']['download'],
-      userName: "${json['user']['first_name']} ${json['user']['last_name']}",
+      userName:
+          "${json['user']['first_name'] ?? ""} ${json['user']['last_name'] ?? ""}",
       userHtml: json['links']['html'],
     );
   }

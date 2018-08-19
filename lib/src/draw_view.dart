@@ -1,18 +1,15 @@
 import 'dart:async';
 
-import 'package:club.swimmingbeaver.apodviewerflutter/database/database.dart';
-import 'package:club.swimmingbeaver.apodviewerflutter/model/NASA_Api.dart';
-import 'package:club.swimmingbeaver.apodviewerflutter/model/unsplash_model.dart';
-import 'package:club.swimmingbeaver.apodviewerflutter/src/data_util.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:club.swimmingbeaver.apodviewerflutter/database/database.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/model/NASA_Api.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/model/unsplash_model.dart';
+import 'package:club.swimmingbeaver.apodviewerflutter/src/data_util.dart';
+
 class SettingDrawer extends StatefulWidget {
-  // final BuildContext context;
-
-  // SettingDrawer({this.context});
-
   @override
   _SettingDrawerState createState() => _SettingDrawerState();
 }
@@ -26,9 +23,11 @@ class _SettingDrawerState extends State<SettingDrawer> {
   @override
   Widget build(BuildContext context) {
     final db = ApodDatabase();
+
     return FutureBuilder(
       future: Future.wait([db.getUserApiKey(), getRandomUnsplash()])
           .then((response) {
+        userApiKey = response[0];
         unsplash = response[1];
       }),
       builder: (_, snapshot) {
@@ -36,104 +35,110 @@ class _SettingDrawerState extends State<SettingDrawer> {
           case ConnectionState.waiting:
             return LinearProgressIndicator();
           default:
-            userApiKey = snapshot.data;
+            var drawerHeaderContext = Padding(
+              padding: EdgeInsets.only(top: 100.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      "Settings",
+                      style: Theme.of(context).primaryTextTheme.headline,
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Photo by ',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8.0,
+                            ),
+                          ),
+                          TextSpan(
+                            text: '${unsplash.userName}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8.0,
+                              decoration: TextDecoration.underline,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () async {
+                                if (await canLaunch(unsplash.userHtml)) {
+                                  launch(unsplash.userHtml);
+                                }
+                              },
+                          ),
+                          TextSpan(
+                            text: ' on ',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8.0,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'Unsplash',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8.0,
+                              decoration: TextDecoration.underline,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () async {
+                                if (await canLaunch('https://unsplash.com')) {
+                                  launch('https://unsplash.com');
+                                }
+                              },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+
+            var drawerHeader = GestureDetector(
+              onLongPress: () async {
+                if (await canLaunch(unsplash.fullUrl)) {
+                  launch(unsplash.fullUrl);
+                }
+              },
+              child: DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  image: DecorationImage(
+                    fit: BoxFit.none,
+                    image: NetworkImage(unsplash.smallUrl),
+                  ),
+                ),
+                child: drawerHeaderContext,
+              ),
+            );
+
+            if (userApiKey != null) {
+              settingApiKeyText = "Your API Key is in used.";
+            }
+
+            var apiSetting = ListTile(
+              title: Text(settingApiKeyText),
+              subtitle: Text(userApiKey ?? ""),
+              leading: Icon(Icons.vpn_key),
+              onTap: () async {
+                await getUserApiKeyDialog(context);
+                Navigator.of(context).pop();
+              },
+            );
+
             return Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: <Widget>[
-                  GestureDetector(
-                    onLongPress: () async {
-                      if (await canLaunch(unsplash.fullUrl)) {
-                        launch(unsplash.fullUrl);
-                      }
-                    },
-                    child: DrawerHeader(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        image: DecorationImage(
-                          fit: BoxFit.fitWidth,
-                          image: NetworkImage(unsplash.smallUrl),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 100.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Expanded(
-                              child: Text(
-                                "Settings",
-                                style:
-                                    Theme.of(context).primaryTextTheme.headline,
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: 'Photo by ',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 8.0,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: '${unsplash.userName}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 8.0,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () async {
-                                          if (await canLaunch(
-                                              unsplash.userHtml)) {
-                                            launch(unsplash.userHtml);
-                                          }
-                                        },
-                                    ),
-                                    TextSpan(
-                                      text: '      on       ',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 8.0,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: 'Unsplash',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 8.0,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () async {
-                                          if (await canLaunch(
-                                              'https://unsplash.com')) {
-                                            launch('https://unsplash.com');
-                                          }
-                                        },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  ListTile(
-                    title: Text(settingApiKeyText),
-                    subtitle: Text(userApiKey ?? ""),
-                    leading: Icon(Icons.vpn_key),
-                    onLongPress: () async {
-                      await getUserApiKeyDialog(context);
-                      Navigator.of(context).pop();
-                    },
-                  ),
+                  drawerHeader,
+                  apiSetting,
                 ],
               ),
               semanticLabel: "Settings",
